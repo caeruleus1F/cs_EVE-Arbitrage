@@ -11,8 +11,8 @@ namespace cs_EVE_Arbitrage
         string _typeid = null;
         string _typename = null;
         float _volume = 0F;
-        float _sellorderlowest = 0F;
-        float _buyorderhighest = 0F;
+        decimal _sellorderlowest = 0M;
+        decimal _buyorderhighest = 0M;
         string _sellorderstation = null;
         string _buyorderstation = null;
 
@@ -28,43 +28,43 @@ namespace cs_EVE_Arbitrage
             _volume = volume;
         }
 
-        string TypeID
+        public string TypeID
         {
             get { return _typeid; }
             set { _typeid = value; }
         }
 
-        string TypeName
+        public string TypeName
         {
             get { return _typename; }
             set { _typename = value; }
         }
 
-        float Volume
+        public float Volume
         {
             get { return _volume; }
             set { _volume = value; }
         }
 
-        float SellOrderLowest
+        public decimal SellOrderLowest
         {
             get { return _sellorderlowest; }
             set { _sellorderlowest = value; }
         }
 
-        float BuyOrderHighest
+        public decimal BuyOrderHighest
         {
             get { return _buyorderhighest; }
             set { _buyorderhighest = value; }
         }
 
-        string SellOrderStation
+        public string SellOrderStation
         {
             get { return _sellorderstation; }
             set { _sellorderstation = value; }
         }
 
-        string BuyOrderStation
+        public string BuyOrderStation
         {
             get { return _buyorderstation; }
             set { _buyorderstation = value; }
