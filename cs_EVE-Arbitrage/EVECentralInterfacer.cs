@@ -28,19 +28,9 @@ namespace cs_EVE_Arbitrage
         public void Begin()
         {
             // get marketstat sellmin from source
-            int typeidsperrequest = 460;
-            int fullrequests = _marketableitems.Count / typeidsperrequest;
-            int partiallistlength = _marketableitems.Count % typeidsperrequest;
-            int requests = partiallistlength != 0 ? fullrequests + 1 : fullrequests;
-
-            StringBuilder[] sb = new StringBuilder[requests];
-            
-            int min = 0;
-            int max = typeidsperrequest;
-            for (int i = 0; i < requests; ++i, min += typeidsperrequest, max += typeidsperrequest)
-            {
-                sb[i] = AssembleSB(min, max); // REDO THIS SO THE REQUEST LENGTH DOESN'T EXCEED SERVER MAX
-            }
+            int maxurilength = 2048;
+            List<string> URIs = AssembleMarketstatSellMinURIs(maxurilength);
+            int requests = URIs.Count;
 
             try
             {
@@ -50,8 +40,8 @@ namespace cs_EVE_Arbitrage
                     w[i] = new WebClient();
                     w[i].Proxy = null;
                     w[i].DownloadStringCompleted += w_MarketstatSellMin;
-                    w[i].DownloadStringAsync(new Uri(sb[i].ToString()));
-                    Thread.Sleep(1100);
+                    w[i].DownloadStringAsync(new Uri(URIs[i]));
+                    Thread.Sleep(1000);
                 }
             }
             catch (Exception ex)
@@ -74,37 +64,53 @@ namespace cs_EVE_Arbitrage
 
             // display the results
 
-            while (responses != requests)
-            {
-                Thread.Sleep(10);
-            }
         }
 
-        private StringBuilder AssembleSB(int min, int max)
+        private List<string> AssembleMarketstatSellMinURIs(int maxlength)
         {
+            List<string> uris = new List<string>();
             StringBuilder sb = new StringBuilder();
+
             sb.Append(_basemarketstaturl).Append("usesystem=").Append(_sourceid).Append("&typeid=");
 
-            for (int i = min; i < max && i < _marketableitems.Count; ++i)
-            {
-                sb.Append(_marketableitems[i].TypeID);
+            int typeidlength = 0;
 
-                if (i < max - 1 && i < _marketableitems.Count - 1)
+            for (int i = 0; i < _marketableitems.Count; ++i)
+            {
+                typeidlength = _marketableitems[i].TypeID.Length;
+
+                if (typeidlength + sb.Length < maxlength)
                 {
-                    sb.Append(',');
+                    sb.Append(_marketableitems[i].TypeID);
+
+                    if (i < _marketableitems.Count - 1)
+                    {
+                        sb.Append(',');
+                    }
+                }
+                else
+                {
+                    if (sb[sb.Length - 1].Equals(','))
+                    {
+                        sb.Remove(sb.Length - 1, 1);
+                    }
+
+                    uris.Add(sb.ToString());
+                    sb.Clear();
+                    sb.Append(_basemarketstaturl).Append("usesystem=").Append(_sourceid).Append("&typeid=");
                 }
             }
 
-            return sb;
+            if (sb.Length > 68)
+            {
+                uris.Add(sb.ToString());
+            }
+
+            return uris;
         }
 
-        int responses = 1;
         private void w_MarketstatSellMin(object sender, DownloadStringCompletedEventArgs e)
         {
-            if (responses == 2)
-            {
-                responses = 2;
-            }
             try
             {
                 XmlDocument xmldoc = new XmlDocument();
@@ -136,7 +142,6 @@ namespace cs_EVE_Arbitrage
             {
 
             }
-            ++responses;
         }
 
         private MarketableItem FindMarketableByTypeID(string typeid)
