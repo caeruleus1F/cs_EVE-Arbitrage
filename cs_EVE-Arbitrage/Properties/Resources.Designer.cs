@@ -8,10 +8,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace cs_EVE_Arbitrage.Properties
-{
-
-
+namespace cs_EVE_Arbitrage.Properties {
+    using System;
+    
+    
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -22,49 +22,137 @@ namespace cs_EVE_Arbitrage.Properties
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources
-    {
-
+    internal class Resources {
+        
         private static global::System.Resources.ResourceManager resourceMan;
-
+        
         private static global::System.Globalization.CultureInfo resourceCulture;
-
+        
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Resources()
-        {
+        internal Resources() {
         }
-
+        
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager
-        {
-            get
-            {
-                if ((resourceMan == null))
-                {
+        internal static global::System.Resources.ResourceManager ResourceManager {
+            get {
+                if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("cs_EVE_Arbitrage.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
             }
         }
-
+        
         /// <summary>
         ///   Overrides the current thread's CurrentUICulture property for all
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture
-        {
-            get
-            {
+        internal static global::System.Globalization.CultureInfo Culture {
+            get {
                 return resourceCulture;
             }
-            set
-            {
+            set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to TYPEID,GROUPID,TYPENAME,VOLUME,MARKETGROUPID,ICONID
+        ///18,458,Plagioclase,0.35,516,230
+        ///19,461,Spodumain,16,517,1274
+        ///20,457,Kernite,1.2,523,1270
+        ///21,454,Hedbergite,3,527,1269
+        ///22,450,Arkonor,16,512,1277
+        ///34,18,Tritanium,0.01,1857,22
+        ///35,18,Pyerite,0.01,1857,400
+        ///36,18,Mexallon,0.01,1857,401
+        ///37,18,Isogen,0.01,1857,402
+        ///38,18,Nocxium,0.01,1857,1201
+        ///39,18,Zydrine,0.01,1857,404
+        ///40,18,Megacyte,0.01,1857,405
+        ///41,280,Garbage,0.25,20,1179
+        ///42,280,Spiced Wine,0.5,492,27
+        ///43,280,Antibiotics,0.2,492,28
+        ///44,1034,Enri [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string invTypes_frostline_10_marketables {
+            get {
+                return ResourceManager.GetString("invTypes_frostline_10_marketables", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to REGIONID,REGIONNAME
+        ///10000001,Derelik
+        ///10000002,The Forge
+        ///10000003,Vale of the Silent
+        ///10000004,UUA-F4
+        ///10000005,Detorid
+        ///10000006,Wicked Creek
+        ///10000007,Cache
+        ///10000008,Scalding Pass
+        ///10000009,Insmother
+        ///10000010,Tribute
+        ///10000011,Great Wildlands
+        ///10000012,Curse
+        ///10000013,Malpais
+        ///10000014,Catch
+        ///10000015,Venal
+        ///10000016,Lonetrek
+        ///10000017,J7HZ-F
+        ///10000018,The Spire
+        ///10000019,A821-A
+        ///10000020,Tash-Murkon
+        ///10000021,Outer Passage
+        ///10000022,Stain
+        ///10000023,Pure Blind
+        ///10000025,Immensea
+        ///10000027,Etherium Rea [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string mapRegions {
+            get {
+                return ResourceManager.GetString("mapRegions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SOLARSYSTEMID,SOLARSYSTEMNAME
+        ///30000001,Tanoo
+        ///30000002,Lashesih
+        ///30000003,Akpivem
+        ///30000004,Jark
+        ///30000005,Sasta
+        ///30000006,Zaid
+        ///30000007,Yuzier
+        ///30000008,Nirbhi
+        ///30000009,Sooma
+        ///30000010,Chidah
+        ///30000011,Shenela
+        ///30000012,Asabona
+        ///30000013,Onsooh
+        ///30000014,Shamahi
+        ///30000015,Sendaya
+        ///30000016,Nazhgete
+        ///30000017,Futzchag
+        ///30000018,Kazna
+        ///30000019,Podion
+        ///30000020,Lilmad
+        ///30000021,Kuharah
+        ///30000022,Jayneleb
+        ///30000023,Fovihi
+        ///30000024,Kiereend
+        ///30000025,Rashy
+        ///30000026,Ordize
+        ///30000027,Psasa
+        ///30000028,Eshtah        /// [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string mapSolarSystems {
+            get {
+                return ResourceManager.GetString("mapSolarSystems", resourceCulture);
             }
         }
     }

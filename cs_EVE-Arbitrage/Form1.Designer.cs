@@ -81,6 +81,7 @@
             this.txbSource.Name = "txbSource";
             this.txbSource.Size = new System.Drawing.Size(100, 20);
             this.txbSource.TabIndex = 4;
+            this.txbSource.Text = "Aulbres";
             // 
             // txbDestination
             // 
@@ -88,6 +89,7 @@
             this.txbDestination.Name = "txbDestination";
             this.txbDestination.Size = new System.Drawing.Size(100, 20);
             this.txbDestination.TabIndex = 5;
+            this.txbDestination.Text = "Jita";
             // 
             // btnSwap
             // 
