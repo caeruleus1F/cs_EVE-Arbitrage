@@ -17,7 +17,7 @@ namespace cs_EVE_Arbitrage
         Form1 _f = null;
 
         string _basemarketstaturl = "http://api.eve-central.com/api/marketstat?";
-        //string _basequicklookurl = "http://api.eve-central.com/api/quicklook?";
+        string _basequicklookurl = "http://api.eve-central.com/api/quicklook?";
 
         int _requests = 0;
         int _serverresponses = 0;
@@ -49,16 +49,225 @@ namespace cs_EVE_Arbitrage
             CalcProfitPerVolume();
 
             // get quicklook sellmin from marketables
-
+            GetQuicklookBuyData(maxurilength);
 
             // get quicklook buymax from marketables
-
+            GetQuicklookSellData(maxurilength);
 
             // display the results
             OrganizeByDescendingPPV();
             DisplayResults();
             Thread.CurrentThread.Abort();
             Thread.CurrentThread.Join();
+        }
+
+        private void GetQuicklookSellData(int maxurilength)
+        {
+            _serverresponses = 0;
+            _locationid = _sourceid;
+            List<string> URIs = AssembleQuicklookURIs(maxurilength);
+            _requests = URIs.Count;
+
+            try
+            {
+                WebClient[] w = new WebClient[_requests];
+                for (int i = 0; i < _requests; ++i)
+                {
+                    w[i] = new WebClient();
+                    w[i].Proxy = null;
+                    w[i].Headers.Add("Contact", "gbates31@gmail.com");
+                    w[i].Headers.Add("IGN", "Thirtyone Organism");
+                    w[i].DownloadStringCompleted += w_QuicklookSellData;
+                    w[i].DownloadStringAsync(new Uri(URIs[i]));
+                    Thread.Sleep(1000);
+                }
+
+                while (_serverresponses < _requests - 1)
+                {
+                    Thread.Sleep(1);
+                }
+
+                UpdateStatus("Source station data retrieved...\n");
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        private void w_QuicklookSellData(object sender, DownloadStringCompletedEventArgs e) // cant test until server comes back up
+        {
+            XmlDocument xmldoc = new XmlDocument();
+            try
+            {
+                xmldoc.LoadXml(e.Result);
+
+                foreach (XmlNode n in xmldoc.SelectNodes("/evec_api/marketstat/type"))
+                {
+                    string typeid = n.Attributes[0].Value;
+                    decimal sellmin = Convert.ToDecimal(n.SelectSingleNode("sell/min").InnerText);
+
+                    if (sellmin == 0M)
+                    {
+                        lock (new object())
+                        {
+                            _marketableitems.Remove(FindMarketableByTypeID(typeid));
+                        }
+                    }
+                    else
+                    {
+                        lock (new object())
+                        {
+                            _marketableitems[_marketableitems.IndexOf(FindMarketableByTypeID(typeid))].SellOrderLowest = sellmin;
+                        }
+                    }
+                }
+
+                lock (new object())
+                {
+                    ++_serverresponses;
+                }
+
+                UpdateStatus("Source Station Data Retrieved (" + _serverresponses + " of " + _requests + ")");
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        private List<string> AssembleQuicklookURIs(int maxurilength)
+        {
+            List<string> uris = new List<string>();
+            StringBuilder sb = new StringBuilder();
+
+            sb = CreateBaseQuicklookURL();
+
+            int typeidlength = 0;
+
+            for (int i = 0; i < _marketableitems.Count; ++i)
+            {
+                typeidlength = _marketableitems[i].TypeID.Length;
+
+                if (typeidlength + sb.Length < maxurilength)
+                {
+                    sb.Append(_marketableitems[i].TypeID);
+
+                    if (i < _marketableitems.Count - 1)
+                    {
+                        sb.Append(',');
+                    }
+                }
+                else
+                {
+                    if (sb[sb.Length - 1].Equals(','))
+                    {
+                        sb.Remove(sb.Length - 1, 1);
+                    }
+
+                    uris.Add(sb.ToString());
+                    sb.Clear();
+                    sb = CreateBaseQuicklookURL();
+                }
+            }
+
+            if (sb.Length > 68)
+            {
+                uris.Add(sb.ToString());
+            }
+
+            return uris;
+        }
+
+        private StringBuilder CreateBaseQuicklookURL()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append(_basequicklookurl);
+
+            if (_locationid[0].Equals('1'))
+            {
+                sb.Append("regionlimit=");
+            }
+            else if (_locationid[0].Equals('3'))
+            {
+                sb.Append("usesystem=");
+            }
+
+            sb.Append(_locationid).Append("&typeid=");
+
+            return sb;
+        }
+
+        private void GetQuicklookBuyData(int maxurilength)
+        {
+            _serverresponses = 0;
+            _locationid = _destinationid;
+            List<string> URIs = AssembleQuicklookURIs(maxurilength);
+            _requests = URIs.Count;
+
+            try
+            {
+                WebClient[] w = new WebClient[_requests];
+                for (int i = 0; i < _requests; ++i)
+                {
+                    w[i] = new WebClient();
+                    w[i].Proxy = null;
+                    w[i].Headers.Add("Contact", "gbates31@gmail.com");
+                    w[i].Headers.Add("IGN", "Thirtyone Organism");
+                    w[i].DownloadStringCompleted += w_QuicklookBuyData;
+                    w[i].DownloadStringAsync(new Uri(URIs[i]));
+                    Thread.Sleep(1000);
+                }
+
+                while (_serverresponses < _requests - 1)
+                {
+                    Thread.Sleep(1);
+                }
+
+                UpdateStatus("Destination station data retrieved...\n");
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        private void w_QuicklookBuyData(object sender, DownloadStringCompletedEventArgs e) // cant test until server comes back up
+        {
+            XmlDocument xmldoc = new XmlDocument();
+            try
+            {
+                xmldoc.LoadXml(e.Result);
+
+                foreach (XmlNode n in xmldoc.SelectNodes("/evec_api/marketstat/type"))
+                {
+                    string typeid = n.Attributes[0].Value;
+                    decimal sellmin = Convert.ToDecimal(n.SelectSingleNode("sell/min").InnerText);
+
+                    if (sellmin == 0M)
+                    {
+                        lock (new object())
+                        {
+                            _marketableitems.Remove(FindMarketableByTypeID(typeid));
+                        }
+                    }
+                    else
+                    {
+                        lock (new object())
+                        {
+                            _marketableitems[_marketableitems.IndexOf(FindMarketableByTypeID(typeid))].SellOrderLowest = sellmin;
+                        }
+                    }
+                }
+
+                lock (new object())
+                {
+                    ++_serverresponses;
+                }
+
+                UpdateStatus("Destination Station Data Retrieved (" + _serverresponses + " of " + _requests + ")");
+            }
+            catch (Exception ex)
+            {
+            }
         }
 
         private void GetMarketstatSellMinData(int maxlength)
@@ -174,19 +383,16 @@ namespace cs_EVE_Arbitrage
                         }
                     }
                 }
-                ++_serverresponses;
+
+                lock (new object())
+                {
+                    ++_serverresponses;
+                }
+
                 UpdateStatus("Sellmin Data Retrieved (" + _serverresponses + " of " + _requests + ")");
             }
             catch (Exception ex)
             {
-            }
-        }
-
-        private void UpdateStatus(string text)
-        {
-            if (_f.rtbDisplay.InvokeRequired)
-            {
-                _f.rtbDisplay.Invoke(new StatusDelegate(_f.UpdateStatus), text);
             }
         }
 
@@ -258,13 +464,24 @@ namespace cs_EVE_Arbitrage
                         }
                     }
                 }
-                ++_serverresponses;
+
+                lock (new object())
+                {
+                    ++_serverresponses;
+                }
+
                 UpdateStatus("Buymax Data Retrieved (" + _serverresponses + " of " + _requests + ")");
             }
             catch (Exception ex)
             {
             }
         }
+
+        /***********************************************************************
+         * 
+         * SUPPORTING FUNCTIONS
+         * 
+         ***********************************************************************/
 
         private void DiscardUnprofitableTrades()
         {
@@ -317,6 +534,14 @@ namespace cs_EVE_Arbitrage
             }
         }
 
+        private void UpdateStatus(string text)
+        {
+            if (_f.rtbDisplay.InvokeRequired)
+            {
+                _f.rtbDisplay.Invoke(new StatusDelegate(_f.UpdateStatus), text);
+            }
+        }
+
         private void DisplayResults()
         {
             if (_f.rtbDisplay.InvokeRequired)
@@ -362,5 +587,6 @@ namespace cs_EVE_Arbitrage
 
             return m;
         }
+
     }
 }
