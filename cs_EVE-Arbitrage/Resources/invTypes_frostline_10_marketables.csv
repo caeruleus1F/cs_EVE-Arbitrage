@@ -7589,7 +7589,6 @@ TYPEID,GROUPID,TYPENAME,VOLUME,MARKETGROUPID,ICONID
 28817,300,Mid-grade Edge Epsilon,1,622,2060
 28818,300,Mid-grade Edge Gamma,1,620,2054
 28819,300,Mid-grade Edge Omega,1,1506,2224
-28840,1194,Magic Crystal Ball,1,1661,3232
 28844,902,Rhea,16250000,1091,
 28846,902,Nomad,15500000,1093,
 28848,902,Anshar,17550000,1092,
@@ -8846,58 +8845,9 @@ TYPEID,GROUPID,TYPENAME,VOLUME,MARKETGROUPID,ICONID
 33010,1162,Medium Freight Container Blueprint,0.01,1008,1174
 33011,649,Small Freight Container,1000,1653,1174
 33012,1162,Small Freight Container Blueprint,0.01,1008,1174
-33015,1194,The Mini Monolith,500,1661,2041
-33016,1194,A Handful of Tiny Stars,10,1661,3025
-33017,1194,Deactivated Station Key Pass,0.01,1661,2853
-33018,1194,Ship Fitting Guide,0.01,1661,2674
-33019,1194,Scotty the Docking Manager's Clone,0.01,1661,34
-33020,1194,A Big Red Button,0.01,1661,2231
-33021,1194,Unit of Lag,0.01,1661,10162
-33022,1194,Postcard From Poitot,0.01,1661,2886
-33023,1194,A Tank of Honor,0.01,1661,1162
-33024,1194,Animal Medical Expert,0.01,1661,2891
-33025,1194,Military Experts and You,0.01,1661,2886
-33026,1194,Rules of Engagement,0.01,1661,2885
-33027,1194,"Little Helper, Female",0.01,1661,2543
-33028,1194,"Little Helper, Male",0.01,1661,10153
-33029,1194,Replica Gallente Cruiser,0.01,1661,2230
-33030,1194,Model of a Fighter,0.01,1661,1177
-33031,1195,NEO YC 114: Team Ineluctable,0.01,1813,20974
-33032,1195,NEO YC 114: Raiden. 58th Squadron,0.01,1813,20974
-33033,1195,NEO YC 114: Last Huzzah,0.01,1813,20974
-33034,1195,NEO YC 114: Why Dash,0.01,1813,20974
-33035,1195,NEO YC 114: RONIN and pixies,0.01,1813,20974
-33036,1195,NEO YC 114: Expendables,0.01,1813,20974
-33037,1195,NEO YC 114: The HUNS,0.01,1813,20974
-33038,1195,NEO YC 114: Tinkerhell and Alts,0.01,1813,20974
-33039,1195,NEO YC 114: Tengu Terror,0.01,1813,20974
-33040,1195,NEO YC 114: Oxygen Isonopes,0.01,1813,20974
-33041,1195,NEO YC 114: Africa‘s Finest,0.01,1813,20974
-33042,1195,NEO YC 114: Something Else,0.01,1813,20974
-33043,1195,NEO YC 114: The Exiled Gaming,0.01,1813,20974
-33044,1195,NEO YC 114: Perihelion Beryllium Duralumin,0.01,1813,20974
-33045,1195,NEO YC 114: Goggle Wearing Internet Crime Fighters,0.01,1813,20974
-33046,1195,NEO YC 114: ISN – Incursion Shiny Network,0.01,1813,20974
-33047,1195,NEO YC 114: Baaaramu,0.01,1813,20974
-33048,1195,NEO YC 114: Asine Hitama‘s team,0.01,1813,20974
-33049,1195,NEO YC 114: EFS,0.01,1813,20974
-33050,1195,NEO YC 114: Much Crying Old Experts,0.01,1813,20974
-33051,1195,NEO YC 114: DeepWater,0.01,1813,20974
-33052,1195,NEO YC 114: Blue Ballers,0.01,1813,20974
-33053,1195,NEO YC 114: The Gentlemen Renegades,0.01,1813,20974
-33054,1195,NEO YC 114: Guiding Hand Social Club,0.01,1813,20974
-33055,1195,NEO YC 114: XXXMity,0.01,1813,20974
-33056,1195,NEO YC 114: My Little Nulli,0.01,1813,20974
-33057,1195,NEO YC 114: 8 CAS,0.01,1813,20974
-33058,1194,Concordokken,0.01,1661,2552
-33059,1194,Shuttle Piloting For Dummies,0.01,1661,2038
-33060,1194,*Sneaks in a classic*,0.01,1661,10159
-33061,1194,Public Portrait: How To,0.01,1661,20976
 33062,1089,Men's 'Red Star' T-shirt,0.1,1398,20982
 33063,1089,Women's 'Red Star' T-shirt,0.1,1406,20979
 33064,1091,Boots.ini,0.1,1662,20977
-33065,1194,Donut Holder,0.01,1661,2304
-33066,1194,New Eden Soundbox,0.01,1661,3439
 33067,1197,Deactivated Station Key Pass Blueprint,0.01,1664,2943
 33076,1199,Small Ancillary Armor Repairer,5,1049,80
 33077,1200,Small Ancillary Armor Repairer Blueprint,0.01,1536,80
@@ -8939,14 +8889,6 @@ TYPEID,GROUPID,TYPENAME,VOLUME,MARKETGROUPID,ICONID
 33197,1238,Scan Acquisition Array II,5,1709,21025
 33199,1223,Scan Pinpointing Array II,5,1709,21026
 33201,1223,Scan Rangefinding Array II,5,1709,21027
-33213,1194,A piece of Steve,0.01,1661,21062
-33214,1194,Band of Brothers Director Access Key,0.01,1661,21063
-33215,1194,Press pass to Prometheus Station opening,0.01,1661,21061
-33217,1194,Lost reminder to pay sov bill,0.01,1661,21060
-33218,1194,Assassination Contract: Mirial,0.01,1661,21066
-33219,1194,Premier ticket for: The last G campaign,0.01,1661,21064
-33220,1194,Premier ticket for: Clear Skies,0.01,1661,21064
-33221,1194,Premier ticket for: Day of Darkness,0.01,1661,21064
 33223,1225,Alliance Tournament I: Band of Brothers,0.01,1812,21065
 33224,1225,Alliance Tournament II: Band of Brothers,0.01,1812,21065
 33225,1225,Alliance Tournament III: Band of Brothers,0.01,1812,21065
@@ -9101,7 +9043,6 @@ TYPEID,GROUPID,TYPENAME,VOLUME,MARKETGROUPID,ICONID
 33571,500,Sodium Firework,0.1,1663,20973
 33572,500,Barium Firework,0.1,1663,20973
 33573,500,Copper Firework,0.1,1663,20973
-33575,1194,"Hull Tanking, Elite",0.01,1661,1192
 33577,314,Covert Research Tools,0.1,1840,2225
 33578,1089,Men's 'Humanitarian' T-shirt YC 115,0.1,1398,21090
 33579,1089,Women's 'Humanitarian' T-shirt YC 115,0.1,1406,21089
@@ -9235,7 +9176,6 @@ TYPEID,GROUPID,TYPENAME,VOLUME,MARKETGROUPID,ICONID
 33804,1088,Women's 'Source' Coat (silver),0.1,1662,21183
 33807,300,Cybernetic 'Source' Subprocessor,1,621,2062
 33808,300,Neural 'Source' Boost,1,620,2054
-33809,1194,New Eden Source,0.01,1661,21186
 33812,1089,Men's 'Quafe' T-shirt YC 116,0.1,1662,21193
 33813,1089,Women's 'Quafe' T-shirt YC 116,0.1,1662,21192
 33816,25,Garmur,27289,1365,
@@ -9509,26 +9449,6 @@ TYPEID,GROUPID,TYPENAME,VOLUME,MARKETGROUPID,ICONID
 34412,997,Small Intact Hull Section,30,1909,3766
 34414,997,Small Malfunctioning Hull Section,30,1909,3766
 34416,997,Small Wrecked Hull Section,30,1909,3766
-34417,1194,Manufacturing Union’s Placard,3,1661,2103
-34418,1194,The Galactic Party Planning Guide,3,1661,10159
-34419,1194,Jump Fatigue Recovery Agent,3,1661,1194
-34420,1194,Cooking With Veldspar,3,1661,1177
-34421,1194,Chribba’s Modified Strip Miner,3,1661,2887
-34422,1194,Rooks & Kings – The Clarion Call Compilation,3,1661,1177
-34423,1194,Pre-Completed CSM 10 Ballot Paper,3,1661,1192
-34424,1194,Titanium Plated Cranial Shielding,3,1661,3182
-34425,1194,SCC Guidelines – Lotteries For Dummies,3,1661,10159
-34426,1194,Sort Dragon’s Guide To Diplomacy,3,1661,10159
-34427,1194,Polaris Eviction Notice,3,1661,21060
-34428,1194,Jump Portal Generation Instruction Holoreel,3,1661,1177
-34429,1194,Vincent Pryce’s Warp Disruption Field Generator,3,1661,111
-34430,1194,"My God, It’s Full Of Holes!",3,1661,10159
-34431,1194,Guillome Renard’s Sleeper Loot Stash,3,1661,3755
-34432,1194,Sisters Of EVE Charity Statue,3,1661,1656
-34433,1194,The Damsel’s Drunk Bodyguard,3,1661,2544
-34434,1194,Alice Saki’s Good Posting Guide,3,1661,10159
-34435,1194,Soxfour’s Spaceboots,3,1661,21170
-34436,1194,The Friend Ship,3,1661,2106
 34481,762,Domination Inertial Stabilizers,5,1086,1041
 34483,762,Shadow Serpentis Inertial Stabilizers,5,1086,1041
 34485,78,ORE Reinforced Bulkheads,5,1195,76
@@ -9703,16 +9623,6 @@ TYPEID,GROUPID,TYPENAME,VOLUME,MARKETGROUPID,ICONID
 34758,1311,Hulk ORE Development SKIN (Permanent),0.01,2012,
 34759,1311,Mackinaw ORE Development SKIN (Permanent),0.01,2012,
 34760,1311,Skiff ORE Development SKIN (Permanent),0.01,2012,
-34769,1194,CSM 1 Electee Archive Script ,0.01,1661,2886
-34770,1194,CSM 2 Electee Archive Script,0.01,1661,2886
-34771,1194,CSM 3 Electee Archive Script,0.01,1661,2886
-34772,1194,CSM 4 Electee Archive Script,0.01,1661,2886
-34773,1194,CSM 5 Electee Archive Script,0.01,1661,2886
-34774,1194,CSM 6 Electee Archive Script,0.01,1661,2886
-34775,1194,CSM 7 Electee Archive Script,0.01,1661,2886
-34776,1194,CSM 8 Electee Archive Script,0.01,1661,2886
-34777,1194,CSM 9 Electee Archive Script,0.01,1661,2886
-34778,1194,CSM 10 Electee Archive Script ,0.01,1661,2886
 34808,1311,Tempest Krusual SKIN (Permanent),0.01,1967,
 34809,1311,Tempest Nefantar SKIN (Permanent),0.01,1967,
 34810,1311,Paladin Blood Raiders SKIN (Permanent),0.01,2024,
@@ -10144,8 +10054,6 @@ TYPEID,GROUPID,TYPENAME,VOLUME,MARKETGROUPID,ICONID
 36914,1311,Executioner Blood Raiders SKIN (Permanent),0.01,2002,
 36915,1311,Harbinger Blood Raiders SKIN (Permanent),0.01,1956,
 36916,1311,Omen Blood Raiders SKIN (Permanent),0.01,1990,
-36946,1194,Expired Blood Raider Cerebral Accelerator,1,1661,10144
-36948,1194,Expired Blood Raider Advanced Cerebral Accelerator,1,1661,10144
 36949,1461,Coalesced Element Blueprint,0.01,2020,107
 36953,447,Structure Telescope Lens Blueprint,0.01,1913,
 36954,447,Structure Acceleration Coils Blueprint,0.01,1913,
@@ -10324,26 +10232,6 @@ TYPEID,GROUPID,TYPENAME,VOLUME,MARKETGROUPID,ICONID
 37867,1311,Garmur Waschi Uprising 'Combat' SKIN (Permanent),0.01,2031,
 37868,1311,Orthrus Waschi Uprising 'Combat' SKIN (Permanent),0.01,2030,
 37869,1311,Barghest Waschi Uprising 'Combat' SKIN (Permanent),0.01,1963,
-37874,1194,Project Compass Star Charts,0,1661,2853
-37875,1194,Contraband Amarrian Walnuts,0,1661,30
-37877,1194,Cerebrum In A Container,0,1661,1209
-37878,1194,Sansha Claws Fairytale Book,0,1661,10159
-37879,1194,Festive Firecrackers,0,1661,3444
-37880,1194,Max Amarria,0,1661,33
-37881,1194,Grand Teigjon Casino Chip,0,1661,3000
-37882,1194,YC117 Symposium On Emergent Threats Access Pass,0,1661,21061
-37883,1194,95th Interstellar Mindclash Championship Tickets,0,1661,21064
-37884,1194,Feawen's Approval Documentation,0,1661,10159
-37885,1194,Meat Popsicle,0,1661,2855
-37886,1194,Capital Parking Ticket,0,1661,21060
-37887,1194,Counterfeit Dominix Model,0,1661,1181
-37888,1194,Starsi,0,1661,27
-37889,1194,YC118 Succession Trial Champion’s Decree – House Tash-Murkon,0,1661,2908
-37892,1194,YC118 Succession Trial Champion’s Decree – House Ardishapur,0,1661,2908
-37893,1194,YC118 Succession Trial Champion’s Decree – House Kador,0,1661,2908
-37894,1194,YC118 Succession Trial Champion’s Decree – House Khanid,0,1661,2908
-37895,1194,YC118 Succession Trial Champion’s Decree – House Kor-Azor,0,1661,2908
-37896,1194,YC118 Succession Trial Champion’s Decree – House Sarum,0,1661,2908
 37965,1311,Garmur Waschi Uprising 'Parade' SKIN (Permanent),0.01,2031,
 37966,1311,Orthrus Waschi Uprising 'Parade' SKIN (Permanent),0.01,2030,
 37967,1311,Barghest Waschi Uprising 'Parade' SKIN (Permanent),0.01,1963,

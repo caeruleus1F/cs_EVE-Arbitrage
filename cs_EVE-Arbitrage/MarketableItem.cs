@@ -15,6 +15,7 @@ namespace cs_EVE_Arbitrage
         decimal _buyorderhighest = 0M;
         string _sellorderstation = null;
         string _buyorderstation = null;
+        decimal _profitperm3 = 0M;
 
         public MarketableItem()
         {
@@ -68,6 +69,12 @@ namespace cs_EVE_Arbitrage
         {
             get { return _buyorderstation; }
             set { _buyorderstation = value; }
+        }
+
+        public decimal ProfitPerM3
+        {
+            get { return _profitperm3; }
+            set { _profitperm3 = value; }
         }
 
     }

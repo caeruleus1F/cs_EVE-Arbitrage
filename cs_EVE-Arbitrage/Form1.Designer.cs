@@ -69,7 +69,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(224, 9);
+            this.label3.Location = new System.Drawing.Point(12, 137);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(45, 13);
             this.label3.TabIndex = 3;
@@ -103,9 +103,9 @@
             // 
             // rtbDisplay
             // 
-            this.rtbDisplay.Location = new System.Drawing.Point(227, 25);
+            this.rtbDisplay.Location = new System.Drawing.Point(12, 153);
             this.rtbDisplay.Name = "rtbDisplay";
-            this.rtbDisplay.Size = new System.Drawing.Size(289, 431);
+            this.rtbDisplay.Size = new System.Drawing.Size(504, 303);
             this.rtbDisplay.TabIndex = 7;
             this.rtbDisplay.Text = "";
             // 
