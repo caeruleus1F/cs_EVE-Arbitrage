@@ -28,6 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             this.btnFind = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -37,8 +43,18 @@
             this.btnSwap = new System.Windows.Forms.Button();
             this.rtbDisplay = new System.Windows.Forms.RichTextBox();
             this.dgvDisplay = new System.Windows.Forms.DataGridView();
+            this.chbExclude = new System.Windows.Forms.CheckBox();
+            this.txbExclude = new System.Windows.Forms.TextBox();
+            this.txbMaxVolume = new System.Windows.Forms.TextBox();
+            this.chbMaxVolume = new System.Windows.Forms.CheckBox();
             this.itemname = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.profitpervolume = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.unitprofit = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.sellmin = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.buyprice = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.unitvolume = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.sellstation = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.destinationstation = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dgvDisplay)).BeginInit();
             this.SuspendLayout();
             // 
@@ -109,7 +125,8 @@
             // 
             this.rtbDisplay.Location = new System.Drawing.Point(12, 153);
             this.rtbDisplay.Name = "rtbDisplay";
-            this.rtbDisplay.Size = new System.Drawing.Size(504, 25);
+            this.rtbDisplay.ReadOnly = true;
+            this.rtbDisplay.Size = new System.Drawing.Size(247, 25);
             this.rtbDisplay.TabIndex = 7;
             this.rtbDisplay.Text = "";
             // 
@@ -118,33 +135,143 @@
             this.dgvDisplay.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvDisplay.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.itemname,
-            this.profitpervolume});
+            this.profitpervolume,
+            this.unitprofit,
+            this.sellmin,
+            this.buyprice,
+            this.unitvolume,
+            this.sellstation,
+            this.destinationstation});
             this.dgvDisplay.Location = new System.Drawing.Point(12, 184);
             this.dgvDisplay.Name = "dgvDisplay";
-            this.dgvDisplay.Size = new System.Drawing.Size(504, 272);
+            this.dgvDisplay.Size = new System.Drawing.Size(1197, 272);
             this.dgvDisplay.TabIndex = 8;
+            // 
+            // chbExclude
+            // 
+            this.chbExclude.AutoSize = true;
+            this.chbExclude.Checked = true;
+            this.chbExclude.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chbExclude.Location = new System.Drawing.Point(221, 27);
+            this.chbExclude.Name = "chbExclude";
+            this.chbExclude.Size = new System.Drawing.Size(108, 17);
+            this.chbExclude.TabIndex = 9;
+            this.chbExclude.Text = "Min. Profit per m³:";
+            this.chbExclude.UseVisualStyleBackColor = true;
+            this.chbExclude.CheckedChanged += new System.EventHandler(this.chbExclude_CheckedChanged);
+            // 
+            // txbExclude
+            // 
+            this.txbExclude.Location = new System.Drawing.Point(335, 25);
+            this.txbExclude.Name = "txbExclude";
+            this.txbExclude.Size = new System.Drawing.Size(100, 20);
+            this.txbExclude.TabIndex = 10;
+            this.txbExclude.Text = "10000";
+            // 
+            // txbMaxVolume
+            // 
+            this.txbMaxVolume.Enabled = false;
+            this.txbMaxVolume.Location = new System.Drawing.Point(335, 51);
+            this.txbMaxVolume.Name = "txbMaxVolume";
+            this.txbMaxVolume.Size = new System.Drawing.Size(100, 20);
+            this.txbMaxVolume.TabIndex = 11;
+            // 
+            // chbMaxVolume
+            // 
+            this.chbMaxVolume.AutoSize = true;
+            this.chbMaxVolume.Location = new System.Drawing.Point(221, 53);
+            this.chbMaxVolume.Name = "chbMaxVolume";
+            this.chbMaxVolume.Size = new System.Drawing.Size(87, 17);
+            this.chbMaxVolume.TabIndex = 12;
+            this.chbMaxVolume.Text = "Max Volume:";
+            this.chbMaxVolume.UseVisualStyleBackColor = true;
+            this.chbMaxVolume.CheckedChanged += new System.EventHandler(this.chbMaxVolume_CheckedChanged);
             // 
             // itemname
             // 
+            dataGridViewCellStyle1.NullValue = null;
+            this.itemname.DefaultCellStyle = dataGridViewCellStyle1;
             this.itemname.Frozen = true;
             this.itemname.HeaderText = "Item Name";
             this.itemname.Name = "itemname";
             this.itemname.ReadOnly = true;
-            this.itemname.Width = 300;
+            this.itemname.Width = 200;
             // 
             // profitpervolume
             // 
+            dataGridViewCellStyle2.Format = "N2";
+            dataGridViewCellStyle2.NullValue = null;
+            this.profitpervolume.DefaultCellStyle = dataGridViewCellStyle2;
             this.profitpervolume.Frozen = true;
             this.profitpervolume.HeaderText = "Profit per m³";
             this.profitpervolume.Name = "profitpervolume";
             this.profitpervolume.ReadOnly = true;
-            this.profitpervolume.Width = 160;
+            // 
+            // unitprofit
+            // 
+            dataGridViewCellStyle3.Format = "N2";
+            dataGridViewCellStyle3.NullValue = null;
+            this.unitprofit.DefaultCellStyle = dataGridViewCellStyle3;
+            this.unitprofit.Frozen = true;
+            this.unitprofit.HeaderText = "Unit Profit";
+            this.unitprofit.Name = "unitprofit";
+            this.unitprofit.ReadOnly = true;
+            // 
+            // sellmin
+            // 
+            dataGridViewCellStyle4.Format = "N2";
+            dataGridViewCellStyle4.NullValue = null;
+            this.sellmin.DefaultCellStyle = dataGridViewCellStyle4;
+            this.sellmin.Frozen = true;
+            this.sellmin.HeaderText = "Sell Min";
+            this.sellmin.Name = "sellmin";
+            this.sellmin.ReadOnly = true;
+            // 
+            // buyprice
+            // 
+            dataGridViewCellStyle5.Format = "N2";
+            dataGridViewCellStyle5.NullValue = null;
+            this.buyprice.DefaultCellStyle = dataGridViewCellStyle5;
+            this.buyprice.Frozen = true;
+            this.buyprice.HeaderText = "Buy Max";
+            this.buyprice.Name = "buyprice";
+            this.buyprice.ReadOnly = true;
+            // 
+            // unitvolume
+            // 
+            dataGridViewCellStyle6.Format = "N2";
+            dataGridViewCellStyle6.NullValue = null;
+            this.unitvolume.DefaultCellStyle = dataGridViewCellStyle6;
+            this.unitvolume.Frozen = true;
+            this.unitvolume.HeaderText = "Unit Volume";
+            this.unitvolume.Name = "unitvolume";
+            this.unitvolume.ReadOnly = true;
+            // 
+            // sellstation
+            // 
+            this.sellstation.Frozen = true;
+            this.sellstation.HeaderText = "Source Station";
+            this.sellstation.Name = "sellstation";
+            this.sellstation.ReadOnly = true;
+            this.sellstation.Width = 225;
+            // 
+            // destinationstation
+            // 
+            this.destinationstation.Frozen = true;
+            this.destinationstation.HeaderText = "Destination Station";
+            this.destinationstation.Name = "destinationstation";
+            this.destinationstation.ReadOnly = true;
+            this.destinationstation.Width = 225;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(528, 468);
+            this.ClientSize = new System.Drawing.Size(1221, 468);
+            this.Controls.Add(this.chbMaxVolume);
+            this.Controls.Add(this.txbMaxVolume);
+            this.Controls.Add(this.txbExclude);
+            this.Controls.Add(this.chbExclude);
             this.Controls.Add(this.dgvDisplay);
             this.Controls.Add(this.rtbDisplay);
             this.Controls.Add(this.btnSwap);
@@ -175,8 +302,18 @@
         private System.Windows.Forms.Button btnSwap;
         public System.Windows.Forms.RichTextBox rtbDisplay;
         private System.Windows.Forms.DataGridView dgvDisplay;
+        private System.Windows.Forms.CheckBox chbExclude;
+        private System.Windows.Forms.TextBox txbExclude;
+        private System.Windows.Forms.TextBox txbMaxVolume;
+        private System.Windows.Forms.CheckBox chbMaxVolume;
         private System.Windows.Forms.DataGridViewTextBoxColumn itemname;
         private System.Windows.Forms.DataGridViewTextBoxColumn profitpervolume;
+        private System.Windows.Forms.DataGridViewTextBoxColumn unitprofit;
+        private System.Windows.Forms.DataGridViewTextBoxColumn sellmin;
+        private System.Windows.Forms.DataGridViewTextBoxColumn buyprice;
+        private System.Windows.Forms.DataGridViewTextBoxColumn unitvolume;
+        private System.Windows.Forms.DataGridViewTextBoxColumn sellstation;
+        private System.Windows.Forms.DataGridViewTextBoxColumn destinationstation;
     }
 }
 

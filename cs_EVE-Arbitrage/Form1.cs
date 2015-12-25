@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Linq;
 using System.Text;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading;
@@ -78,7 +78,7 @@ namespace cs_EVE_Arbitrage
             if (sourceid == null) MessageBox.Show("Source mispelled?");
 
             destinationid = FindSolarSystemID(destination);
-            if (destinationid == null) sourceid = FindRegionID(destination);
+            if (destinationid == null) destinationid = FindRegionID(destination);
             if (destinationid == null) MessageBox.Show("Destination mispelled?");
 
             if (sourceid != null && destinationid != null)
@@ -138,9 +138,29 @@ namespace cs_EVE_Arbitrage
 
         public void Display(List<MarketableItem> marketables)
         {
+            decimal minprofitpervolume = 0M;
+            float maxvolume = 2000000F;
+
+            if (chbExclude.Checked == true)
+            {
+                minprofitpervolume = Convert.ToDecimal(txbExclude.Text);
+            }
+
+            if (chbMaxVolume.Checked == true)
+            {
+                maxvolume = Convert.ToSingle(txbMaxVolume.Text);
+            }
+
             foreach (MarketableItem m in marketables)
             {
-                dgvDisplay.Rows.Add(m.TypeName, m.ProfitPerM3.ToString("N2"));
+                if (m.ProfitPerM3 >= minprofitpervolume &&
+                    m.Volume <= maxvolume)
+                {
+                    decimal unitprofit = (m.BuyOrderHighest * .98M - m.SellOrderLowest);
+                    dgvDisplay.Rows.Add(m.TypeName, m.ProfitPerM3, unitprofit,
+                        m.SellOrderLowest, m.BuyOrderHighest, m.Volume,
+                        m.SellOrderStation, m.BuyOrderStation);
+                }
             }
 
             rtbDisplay.Text = "Complete!";
@@ -154,6 +174,30 @@ namespace cs_EVE_Arbitrage
         private void Form1_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             Thread.CurrentThread.Abort();
+        }
+
+        private void chbExclude_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chbExclude.Checked == true)
+            {
+                txbExclude.Enabled = true;
+            }
+            else
+            {
+                txbExclude.Enabled = false;
+            }
+        }
+
+        private void chbMaxVolume_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chbMaxVolume.Checked == true)
+            {
+                txbMaxVolume.Enabled = true;
+            }
+            else
+            {
+                txbMaxVolume.Enabled = false;
+            }
         }
     }
 }

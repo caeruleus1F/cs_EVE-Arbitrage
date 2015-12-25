@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Threading;
+using System.Text;
 using System.Net;
 using System.Xml;
 
@@ -18,7 +17,7 @@ namespace cs_EVE_Arbitrage
         Form1 _f = null;
 
         string _basemarketstaturl = "http://api.eve-central.com/api/marketstat?";
-        string _basequicklookurl = "http://api.eve-central.com/api/quicklook?";
+        //string _basequicklookurl = "http://api.eve-central.com/api/quicklook?";
 
         int _requests = 0;
         int _serverresponses = 0;
@@ -76,6 +75,8 @@ namespace cs_EVE_Arbitrage
                 {
                     w[i] = new WebClient();
                     w[i].Proxy = null;
+                    w[i].Headers.Add("Contact", "gbates31@gmail.com");
+                    w[i].Headers.Add("IGN", "Thirtyone Organism");
                     w[i].DownloadStringCompleted += w_MarketstatSellMin;
                     w[i].DownloadStringAsync(new Uri(URIs[i]));
                     Thread.Sleep(1000);
@@ -100,7 +101,6 @@ namespace cs_EVE_Arbitrage
             }
             catch (Exception ex)
             {
-
             }
         }
 
@@ -179,7 +179,6 @@ namespace cs_EVE_Arbitrage
             }
             catch (Exception ex)
             {
-
             }
         }
 
@@ -229,7 +228,6 @@ namespace cs_EVE_Arbitrage
             }
             catch (Exception ex)
             {
-
             }
         }
 
@@ -265,7 +263,6 @@ namespace cs_EVE_Arbitrage
             }
             catch (Exception ex)
             {
-
             }
         }
 
