@@ -138,21 +138,22 @@ namespace cs_EVE_Arbitrage
 
         public void Display(List<MarketableItem> marketables)
         {
-            StringBuilder sb = new StringBuilder();
-            sb.Append("ITEM NAME: PROFIT PER VOLUME").Append(Environment.NewLine);
-
             foreach (MarketableItem m in marketables)
             {
-                sb.Append(m.TypeName).Append(": ").Append(m.ProfitPerM3.ToString("N2")).Append(Environment.NewLine);
+                dgvDisplay.Rows.Add(m.TypeName, m.ProfitPerM3.ToString("N2"));
             }
 
-            rtbDisplay.Text = "";
-            rtbDisplay.Text = sb.ToString();
+            rtbDisplay.Text = "Complete!";
         }
 
         public void UpdateStatus(string text)
         {
             rtbDisplay.Text = text;
+        }
+
+        private void Form1_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            Thread.CurrentThread.Abort();
         }
     }
 }

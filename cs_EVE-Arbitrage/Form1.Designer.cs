@@ -36,6 +36,10 @@
             this.txbDestination = new System.Windows.Forms.TextBox();
             this.btnSwap = new System.Windows.Forms.Button();
             this.rtbDisplay = new System.Windows.Forms.RichTextBox();
+            this.dgvDisplay = new System.Windows.Forms.DataGridView();
+            this.itemname = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.profitpervolume = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvDisplay)).BeginInit();
             this.SuspendLayout();
             // 
             // btnFind
@@ -81,7 +85,7 @@
             this.txbSource.Name = "txbSource";
             this.txbSource.Size = new System.Drawing.Size(100, 20);
             this.txbSource.TabIndex = 4;
-            this.txbSource.Text = "Aulbres";
+            this.txbSource.Text = "Curse";
             // 
             // txbDestination
             // 
@@ -105,15 +109,43 @@
             // 
             this.rtbDisplay.Location = new System.Drawing.Point(12, 153);
             this.rtbDisplay.Name = "rtbDisplay";
-            this.rtbDisplay.Size = new System.Drawing.Size(504, 303);
+            this.rtbDisplay.Size = new System.Drawing.Size(504, 25);
             this.rtbDisplay.TabIndex = 7;
             this.rtbDisplay.Text = "";
+            // 
+            // dgvDisplay
+            // 
+            this.dgvDisplay.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvDisplay.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.itemname,
+            this.profitpervolume});
+            this.dgvDisplay.Location = new System.Drawing.Point(12, 184);
+            this.dgvDisplay.Name = "dgvDisplay";
+            this.dgvDisplay.Size = new System.Drawing.Size(504, 272);
+            this.dgvDisplay.TabIndex = 8;
+            // 
+            // itemname
+            // 
+            this.itemname.Frozen = true;
+            this.itemname.HeaderText = "Item Name";
+            this.itemname.Name = "itemname";
+            this.itemname.ReadOnly = true;
+            this.itemname.Width = 300;
+            // 
+            // profitpervolume
+            // 
+            this.profitpervolume.Frozen = true;
+            this.profitpervolume.HeaderText = "Profit per m³";
+            this.profitpervolume.Name = "profitpervolume";
+            this.profitpervolume.ReadOnly = true;
+            this.profitpervolume.Width = 160;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(528, 468);
+            this.Controls.Add(this.dgvDisplay);
             this.Controls.Add(this.rtbDisplay);
             this.Controls.Add(this.btnSwap);
             this.Controls.Add(this.txbDestination);
@@ -126,6 +158,7 @@
             this.ShowIcon = false;
             this.Text = "EVE Arbitrage Finder";
             this.Load += new System.EventHandler(this.Form1_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.dgvDisplay)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -141,6 +174,9 @@
         private System.Windows.Forms.TextBox txbDestination;
         private System.Windows.Forms.Button btnSwap;
         public System.Windows.Forms.RichTextBox rtbDisplay;
+        private System.Windows.Forms.DataGridView dgvDisplay;
+        private System.Windows.Forms.DataGridViewTextBoxColumn itemname;
+        private System.Windows.Forms.DataGridViewTextBoxColumn profitpervolume;
     }
 }
 
