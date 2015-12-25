@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace cs_EVE_Arbitrage
 {
-    class MarketableItem
+    public class MarketableItem
     {
         string _typeid = null;
         string _typename = null;

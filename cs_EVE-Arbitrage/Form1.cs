@@ -83,7 +83,7 @@ namespace cs_EVE_Arbitrage
 
             if (sourceid != null && destinationid != null)
             {
-                Thread t = new Thread(new EVECentralInterfacer(sourceid, destinationid, _all_marketables).Begin);
+                Thread t = new Thread(new EVECentralInterfacer(this, sourceid, destinationid, _all_marketables).Begin);
                 t.Start();
             }
 
@@ -134,6 +134,26 @@ namespace cs_EVE_Arbitrage
             string temp = txbSource.Text;
             txbSource.Text = txbDestination.Text;
             txbDestination.Text = temp;
+        }
+
+        public void Display(List<MarketableItem> marketables)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("ITEM NAME: PROFIT PER VOLUME").Append(Environment.NewLine);
+
+            foreach (MarketableItem m in marketables)
+            {
+                sb.Append(m.TypeName).Append(": ").Append(m.ProfitPerM3).Append(Environment.NewLine);
+            }
+
+            rtbDisplay.Text = "";
+            rtbDisplay.Text = sb.ToString();
+
+        }
+
+        public void UpdateStatus(string text)
+        {
+            rtbDisplay.Text = text;
         }
     }
 }

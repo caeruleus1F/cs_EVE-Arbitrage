@@ -14,15 +14,21 @@ namespace cs_EVE_Arbitrage
         string _sourceid = null;
         string _destinationid = null;
         string _locationid = null;
-        List<MarketableItem> _marketableitems = null;
+        volatile List<MarketableItem> _marketableitems = null;
+        Form1 _f = null;
 
         string _basemarketstaturl = "http://api.eve-central.com/api/marketstat?";
         string _basequicklookurl = "http://api.eve-central.com/api/quicklook?";
 
+        int _requests = 0;
         int _serverresponses = 0;
 
-        public EVECentralInterfacer(string source, string destination, List<MarketableItem> marketableitems)
+        public delegate void DisplayDelegate(List<MarketableItem> marketableitems);
+        public delegate void StatusDelegate(string text);
+
+        public EVECentralInterfacer(Form1 f, string source, string destination, List<MarketableItem> marketableitems)
         {
+            _f = f;
             _sourceid = source;
             _destinationid = destination;
             _marketableitems = marketableitems;
@@ -50,60 +56,32 @@ namespace cs_EVE_Arbitrage
 
 
             // display the results
-
+            OrganizeByAscendingPPV();
+            DisplayResults();
+            Thread.CurrentThread.Abort();
+            Thread.CurrentThread.Join();
         }
 
-        private void CalcProfitPerVolume()
-        {
-            float buy = 0F;
-            float sell = 0F;
-            float difference = 0F;
-
-            for (int i = 0; i < _marketableitems.Count; ++i)
-            {
-                buy = Convert.ToSingle(_marketableitems[i].BuyOrderHighest) * .98F;
-                sell = Convert.ToSingle(_marketableitems[i].SellOrderLowest);
-                difference = buy - sell;
-                _marketableitems[i].ProfitPerM3 = Convert.ToDecimal(difference / _marketableitems[i].Volume);
-            }
-        }
-
-        private void DiscardUnprofitableTrades()
-        {
-            float buyprice = 0F;
-            float sellprice = 0F;
-            for (int i = _marketableitems.Count - 1; i >= 0; --i)
-            {
-                buyprice = Convert.ToSingle(_marketableitems[i].BuyOrderHighest) * 0.98F;
-                sellprice = Convert.ToSingle(_marketableitems[i].SellOrderLowest);
-
-                if (sellprice > buyprice)
-                {
-                    _marketableitems.RemoveAt(i);
-                }
-            }
-        }
-
-        private void GetMarketstatBuyMaxData(int maxurilength)
+        private void GetMarketstatSellMinData(int maxlength)
         {
             _serverresponses = 0;
-            _locationid = _destinationid;
-            List<string> URIs = AssembleMarketstatURIs(maxurilength);
-            int requests = URIs.Count;
+            _locationid = _sourceid;
+            List<string> URIs = AssembleMarketstatURIs(maxlength);
+            _requests = URIs.Count;
 
             try
             {
-                WebClient[] w = new WebClient[requests];
-                for (int i = 0; i < requests; ++i)
+                WebClient[] w = new WebClient[_requests];
+                for (int i = 0; i < _requests; ++i)
                 {
                     w[i] = new WebClient();
                     w[i].Proxy = null;
-                    w[i].DownloadStringCompleted += w_MarketstatBuyMax;
+                    w[i].DownloadStringCompleted += w_MarketstatSellMin;
                     w[i].DownloadStringAsync(new Uri(URIs[i]));
                     Thread.Sleep(1000);
                 }
 
-                while (_serverresponses < requests - 1)
+                while (_serverresponses < _requests - 1)
                 {
                     Thread.Sleep(1);
                 }
@@ -112,11 +90,13 @@ namespace cs_EVE_Arbitrage
                 // are removed from the list of marketables.
                 for (int i = _marketableitems.Count - 1; i >= 0; --i)
                 {
-                    if (_marketableitems[i].BuyOrderHighest == 0M)
+                    if (_marketableitems[i].SellOrderLowest == 0M)
                     {
                         _marketableitems.RemoveAt(i);
                     }
                 }
+
+                UpdateStatus("Source market sell min data complete...\n");
             }
             catch (Exception ex)
             {
@@ -167,109 +147,12 @@ namespace cs_EVE_Arbitrage
             return uris;
         }
 
-        private StringBuilder CreateBaseMarketstatURL()
-        {
-            StringBuilder sb = new StringBuilder();
-
-            sb.Append(_basemarketstaturl);
-
-            if (_locationid[0].Equals('1'))
-            {
-                sb.Append("regionlimit=");
-            }
-            else if (_locationid[0].Equals('3'))
-            {
-                sb.Append("usesystem=");
-            }
-
-            sb.Append(_locationid).Append("&typeid=");
-
-            return sb;
-        }
-
-        private void GetMarketstatSellMinData(int maxlength)
-        {
-            _serverresponses = 0;
-            _locationid = _sourceid;
-            List<string> URIs = AssembleMarketstatURIs(maxlength);
-            int requests = URIs.Count;
-
-            try
-            {
-                WebClient[] w = new WebClient[requests];
-                for (int i = 0; i < requests; ++i)
-                {
-                    w[i] = new WebClient();
-                    w[i].Proxy = null;
-                    w[i].DownloadStringCompleted += w_MarketstatSellMin;
-                    w[i].DownloadStringAsync(new Uri(URIs[i]));
-                    Thread.Sleep(1000);
-                }
-
-                while (_serverresponses < requests - 1)
-                {
-                    Thread.Sleep(1);
-                }
-
-                // for whatever reason, not all items with no sell orders
-                // are removed from the list of marketables.
-                for (int i = _marketableitems.Count - 1; i >= 0 ; --i)
-                {
-                    if (_marketableitems[i].SellOrderLowest == 0M)
-                    {
-                        _marketableitems.RemoveAt(i);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-
-            }
-        }
-
-        private void w_MarketstatBuyMax(object sender, DownloadStringCompletedEventArgs e)
-        {
-            XmlDocument xmldoc = new XmlDocument();
-            try
-            {
-                xmldoc.LoadXml(e.Result);
-                xmldoc.Save(DateTime.Now.Second + "_" + DateTime.Now.Millisecond.ToString() + ".xml");
-
-                foreach (XmlNode n in xmldoc.SelectNodes("/evec_api/marketstat/type"))
-                {
-                    string typeid = n.Attributes[0].Value;
-                    decimal buymax = Convert.ToDecimal(n.SelectSingleNode("buy/max").InnerText);
-
-                    if (buymax == 0M)
-                    {
-                        lock (new object())
-                        {
-                            _marketableitems.Remove(FindMarketableByTypeID(typeid));
-                        }
-                    }
-                    else
-                    {
-                        lock (new object())
-                        {
-                            _marketableitems[_marketableitems.IndexOf(FindMarketableByTypeID(typeid))].BuyOrderHighest = buymax;
-                        }
-                    }
-                }
-                ++_serverresponses;
-            }
-            catch (Exception ex)
-            {
-                xmldoc.Save("problem_response.xml");
-            }
-        }
-
         private void w_MarketstatSellMin(object sender, DownloadStringCompletedEventArgs e)
         {
             XmlDocument xmldoc = new XmlDocument();
             try
             {
                 xmldoc.LoadXml(e.Result);
-                xmldoc.Save(DateTime.Now.Second + "_" + DateTime.Now.Millisecond.ToString() + ".xml");
 
                 foreach (XmlNode n in xmldoc.SelectNodes("/evec_api/marketstat/type"))
                 {
@@ -292,11 +175,166 @@ namespace cs_EVE_Arbitrage
                     }
                 }
                 ++_serverresponses;
+                UpdateStatus("Sellmin Data Retrieved (" + _serverresponses + " of " + _requests + ")");
             }
             catch (Exception ex)
             {
-                xmldoc.Save("problem_response.xml");
+
             }
+        }
+
+        private void UpdateStatus(string text)
+        {
+            if (_f.rtbDisplay.InvokeRequired)
+            {
+                _f.rtbDisplay.Invoke(new StatusDelegate(_f.UpdateStatus), text);
+            }
+        }
+
+        private void GetMarketstatBuyMaxData(int maxurilength)
+        {
+            _serverresponses = 0;
+            _locationid = _destinationid;
+            List<string> URIs = AssembleMarketstatURIs(maxurilength);
+            _requests = URIs.Count;
+
+            try
+            {
+                WebClient[] w = new WebClient[_requests];
+                for (int i = 0; i < _requests; ++i)
+                {
+                    w[i] = new WebClient();
+                    w[i].Proxy = null;
+                    w[i].DownloadStringCompleted += w_MarketstatBuyMax;
+                    w[i].DownloadStringAsync(new Uri(URIs[i]));
+                    Thread.Sleep(1000);
+                }
+
+                while (_serverresponses < _requests - 1)
+                {
+                    Thread.Sleep(1);
+                }
+
+                // for whatever reason, not all items with no sell orders
+                // are removed from the list of marketables.
+                for (int i = _marketableitems.Count - 1; i >= 0; --i)
+                {
+                    if (_marketableitems[i].BuyOrderHighest == 0M)
+                    {
+                        _marketableitems.RemoveAt(i);
+                    }
+                }
+
+                UpdateStatus("Destination market buy max data complete...\n");
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+        private void w_MarketstatBuyMax(object sender, DownloadStringCompletedEventArgs e)
+        {
+            XmlDocument xmldoc = new XmlDocument();
+            try
+            {
+                xmldoc.LoadXml(e.Result);
+
+                foreach (XmlNode n in xmldoc.SelectNodes("/evec_api/marketstat/type"))
+                {
+                    string typeid = n.Attributes[0].Value;
+                    decimal buymax = Convert.ToDecimal(n.SelectSingleNode("buy/max").InnerText);
+
+                    if (buymax == 0M)
+                    {
+                        lock (new object())
+                        {
+                            _marketableitems.Remove(FindMarketableByTypeID(typeid));
+                        }
+                    }
+                    else
+                    {
+                        lock (new object())
+                        {
+                            _marketableitems[_marketableitems.IndexOf(FindMarketableByTypeID(typeid))].BuyOrderHighest = buymax;
+                        }
+                    }
+                }
+                ++_serverresponses;
+                UpdateStatus("Buymax Data Retrieved (" + _serverresponses + " of " + _requests + ")");
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+        private void DiscardUnprofitableTrades()
+        {
+            float buyprice = 0F;
+            float sellprice = 0F;
+            for (int i = _marketableitems.Count - 1; i >= 0; --i)
+            {
+                buyprice = Convert.ToSingle(_marketableitems[i].BuyOrderHighest) * 0.98F;
+                sellprice = Convert.ToSingle(_marketableitems[i].SellOrderLowest);
+
+                if (sellprice > buyprice)
+                {
+                    _marketableitems.RemoveAt(i);
+                }
+            }
+
+            UpdateStatus("Unprofitable trades discarded...\n");
+        }
+
+        private void CalcProfitPerVolume()
+        {
+            float buy = 0F;
+            float sell = 0F;
+            float difference = 0F;
+
+            for (int i = 0; i < _marketableitems.Count; ++i)
+            {
+                buy = Convert.ToSingle(_marketableitems[i].BuyOrderHighest) * .98F;
+                sell = Convert.ToSingle(_marketableitems[i].SellOrderLowest);
+                difference = buy - sell;
+                _marketableitems[i].ProfitPerM3 = Convert.ToDecimal(difference / _marketableitems[i].Volume);
+            }
+
+            UpdateStatus("Profit per volume calculated...\n");
+        }
+
+        private void OrganizeByAscendingPPV()
+        {
+
+        }
+
+        private void DisplayResults()
+        {
+            if (_f.rtbDisplay.InvokeRequired)
+            {
+                _f.rtbDisplay.Invoke(new DisplayDelegate(_f.Display), _marketableitems);
+            }
+        }
+
+        private StringBuilder CreateBaseMarketstatURL()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append(_basemarketstaturl);
+
+            if (_locationid[0].Equals('1'))
+            {
+                sb.Append("regionlimit=");
+            }
+            else if (_locationid[0].Equals('3'))
+            {
+                sb.Append("usesystem=");
+            }
+
+            sb.Append(_locationid).Append("&typeid=");
+
+            return sb;
         }
 
         private MarketableItem FindMarketableByTypeID(string typeid)

@@ -140,7 +140,7 @@
         private System.Windows.Forms.TextBox txbSource;
         private System.Windows.Forms.TextBox txbDestination;
         private System.Windows.Forms.Button btnSwap;
-        private System.Windows.Forms.RichTextBox rtbDisplay;
+        public System.Windows.Forms.RichTextBox rtbDisplay;
     }
 }
 
