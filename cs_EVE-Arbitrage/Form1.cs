@@ -84,6 +84,7 @@ namespace cs_EVE_Arbitrage
             if (sourceid != null && destinationid != null)
             {
                 Thread t = new Thread(new EVECentralInterfacer(this, sourceid, destinationid, _all_marketables).Begin);
+                t.IsBackground = true;
                 t.Start();
             }
 
@@ -169,11 +170,6 @@ namespace cs_EVE_Arbitrage
         public void UpdateStatus(string text)
         {
             rtbDisplay.Text = text;
-        }
-
-        private void Form1_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            Thread.CurrentThread.Abort();
         }
 
         private void chbExclude_CheckedChanged(object sender, EventArgs e)
