@@ -56,7 +56,7 @@ namespace cs_EVE_Arbitrage
 
 
             // display the results
-            OrganizeByAscendingPPV();
+            OrganizeByDescendingPPV();
             DisplayResults();
             Thread.CurrentThread.Abort();
             Thread.CurrentThread.Join();
@@ -304,9 +304,20 @@ namespace cs_EVE_Arbitrage
             UpdateStatus("Profit per volume calculated...\n");
         }
 
-        private void OrganizeByAscendingPPV()
+        private void OrganizeByDescendingPPV()
         {
-
+            // bubble sortint temp;
+            for(int i = 0; i < _marketableitems.Count - 1; ++i)
+            {
+                for(int j = 1; j < _marketableitems.Count - i; ++j)
+                {
+                    if(_marketableitems[j-1].ProfitPerM3 < _marketableitems[j].ProfitPerM3){
+                        MarketableItem temp = _marketableitems[j-1];
+                        _marketableitems[j-1] = _marketableitems[j];
+                        _marketableitems[j] = temp;
+                    }
+                }
+            }
         }
 
         private void DisplayResults()

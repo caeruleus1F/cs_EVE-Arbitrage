@@ -143,12 +143,11 @@ namespace cs_EVE_Arbitrage
 
             foreach (MarketableItem m in marketables)
             {
-                sb.Append(m.TypeName).Append(": ").Append(m.ProfitPerM3).Append(Environment.NewLine);
+                sb.Append(m.TypeName).Append(": ").Append(m.ProfitPerM3.ToString("N2")).Append(Environment.NewLine);
             }
 
             rtbDisplay.Text = "";
             rtbDisplay.Text = sb.ToString();
-
         }
 
         public void UpdateStatus(string text)
