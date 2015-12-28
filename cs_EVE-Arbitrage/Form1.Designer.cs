@@ -28,12 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle13 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle14 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle15 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle16 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle17 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle18 = new System.Windows.Forms.DataGridViewCellStyle();
             this.btnFind = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -47,14 +47,16 @@
             this.txbExclude = new System.Windows.Forms.TextBox();
             this.txbMaxVolume = new System.Windows.Forms.TextBox();
             this.chbMaxVolume = new System.Windows.Forms.CheckBox();
+            this.chbStationNames = new System.Windows.Forms.CheckBox();
+            this.btnReapplyFilters = new System.Windows.Forms.Button();
             this.itemname = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.profitpervolume = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.unitprofit = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.sellmin = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.buyprice = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.unitvolume = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.sellstation = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.destinationstation = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ordertype = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.sellmin = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.buyprice = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dgvDisplay)).BeginInit();
             this.SuspendLayout();
             // 
@@ -101,7 +103,7 @@
             this.txbSource.Name = "txbSource";
             this.txbSource.Size = new System.Drawing.Size(100, 20);
             this.txbSource.TabIndex = 4;
-            this.txbSource.Text = "Curse";
+            this.txbSource.Text = "Amarr";
             // 
             // txbDestination
             // 
@@ -109,7 +111,7 @@
             this.txbDestination.Name = "txbDestination";
             this.txbDestination.Size = new System.Drawing.Size(100, 20);
             this.txbDestination.TabIndex = 5;
-            this.txbDestination.Text = "Jita";
+            this.txbDestination.Text = "E-YJ8G";
             // 
             // btnSwap
             // 
@@ -137,14 +139,14 @@
             this.itemname,
             this.profitpervolume,
             this.unitprofit,
-            this.sellmin,
-            this.buyprice,
             this.unitvolume,
             this.sellstation,
-            this.destinationstation});
+            this.ordertype,
+            this.sellmin,
+            this.buyprice});
             this.dgvDisplay.Location = new System.Drawing.Point(12, 184);
             this.dgvDisplay.Name = "dgvDisplay";
-            this.dgvDisplay.Size = new System.Drawing.Size(1197, 272);
+            this.dgvDisplay.Size = new System.Drawing.Size(1013, 355);
             this.dgvDisplay.TabIndex = 8;
             // 
             // chbExclude
@@ -187,10 +189,32 @@
             this.chbMaxVolume.UseVisualStyleBackColor = true;
             this.chbMaxVolume.CheckedChanged += new System.EventHandler(this.chbMaxVolume_CheckedChanged);
             // 
+            // chbStationNames
+            // 
+            this.chbStationNames.AutoSize = true;
+            this.chbStationNames.Checked = true;
+            this.chbStationNames.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chbStationNames.Location = new System.Drawing.Point(96, 96);
+            this.chbStationNames.Name = "chbStationNames";
+            this.chbStationNames.Size = new System.Drawing.Size(133, 17);
+            this.chbStationNames.TabIndex = 13;
+            this.chbStationNames.Text = "Resolve station names";
+            this.chbStationNames.UseVisualStyleBackColor = true;
+            // 
+            // btnReapplyFilters
+            // 
+            this.btnReapplyFilters.Location = new System.Drawing.Point(360, 77);
+            this.btnReapplyFilters.Name = "btnReapplyFilters";
+            this.btnReapplyFilters.Size = new System.Drawing.Size(75, 23);
+            this.btnReapplyFilters.TabIndex = 14;
+            this.btnReapplyFilters.Text = "Re-apply";
+            this.btnReapplyFilters.UseVisualStyleBackColor = true;
+            this.btnReapplyFilters.Click += new System.EventHandler(this.btnReapplyFilters_Click);
+            // 
             // itemname
             // 
-            dataGridViewCellStyle1.NullValue = null;
-            this.itemname.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle13.NullValue = null;
+            this.itemname.DefaultCellStyle = dataGridViewCellStyle13;
             this.itemname.Frozen = true;
             this.itemname.HeaderText = "Item Name";
             this.itemname.Name = "itemname";
@@ -199,9 +223,9 @@
             // 
             // profitpervolume
             // 
-            dataGridViewCellStyle2.Format = "N2";
-            dataGridViewCellStyle2.NullValue = null;
-            this.profitpervolume.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle14.Format = "N2";
+            dataGridViewCellStyle14.NullValue = null;
+            this.profitpervolume.DefaultCellStyle = dataGridViewCellStyle14;
             this.profitpervolume.Frozen = true;
             this.profitpervolume.HeaderText = "Profit per m³";
             this.profitpervolume.Name = "profitpervolume";
@@ -209,39 +233,19 @@
             // 
             // unitprofit
             // 
-            dataGridViewCellStyle3.Format = "N2";
-            dataGridViewCellStyle3.NullValue = null;
-            this.unitprofit.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle15.Format = "N2";
+            dataGridViewCellStyle15.NullValue = null;
+            this.unitprofit.DefaultCellStyle = dataGridViewCellStyle15;
             this.unitprofit.Frozen = true;
             this.unitprofit.HeaderText = "Unit Profit";
             this.unitprofit.Name = "unitprofit";
             this.unitprofit.ReadOnly = true;
             // 
-            // sellmin
-            // 
-            dataGridViewCellStyle4.Format = "N2";
-            dataGridViewCellStyle4.NullValue = null;
-            this.sellmin.DefaultCellStyle = dataGridViewCellStyle4;
-            this.sellmin.Frozen = true;
-            this.sellmin.HeaderText = "Sell Min";
-            this.sellmin.Name = "sellmin";
-            this.sellmin.ReadOnly = true;
-            // 
-            // buyprice
-            // 
-            dataGridViewCellStyle5.Format = "N2";
-            dataGridViewCellStyle5.NullValue = null;
-            this.buyprice.DefaultCellStyle = dataGridViewCellStyle5;
-            this.buyprice.Frozen = true;
-            this.buyprice.HeaderText = "Buy Max";
-            this.buyprice.Name = "buyprice";
-            this.buyprice.ReadOnly = true;
-            // 
             // unitvolume
             // 
-            dataGridViewCellStyle6.Format = "N2";
-            dataGridViewCellStyle6.NullValue = null;
-            this.unitvolume.DefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle16.Format = "N2";
+            dataGridViewCellStyle16.NullValue = null;
+            this.unitvolume.DefaultCellStyle = dataGridViewCellStyle16;
             this.unitvolume.Frozen = true;
             this.unitvolume.HeaderText = "Unit Volume";
             this.unitvolume.Name = "unitvolume";
@@ -250,24 +254,46 @@
             // sellstation
             // 
             this.sellstation.Frozen = true;
-            this.sellstation.HeaderText = "Source Station";
+            this.sellstation.HeaderText = "Station";
             this.sellstation.Name = "sellstation";
             this.sellstation.ReadOnly = true;
             this.sellstation.Width = 225;
             // 
-            // destinationstation
+            // ordertype
             // 
-            this.destinationstation.Frozen = true;
-            this.destinationstation.HeaderText = "Destination Station";
-            this.destinationstation.Name = "destinationstation";
-            this.destinationstation.ReadOnly = true;
-            this.destinationstation.Width = 225;
+            this.ordertype.Frozen = true;
+            this.ordertype.HeaderText = "Type";
+            this.ordertype.Name = "ordertype";
+            this.ordertype.ReadOnly = true;
+            this.ordertype.Width = 40;
+            // 
+            // sellmin
+            // 
+            dataGridViewCellStyle17.Format = "N2";
+            dataGridViewCellStyle17.NullValue = null;
+            this.sellmin.DefaultCellStyle = dataGridViewCellStyle17;
+            this.sellmin.Frozen = true;
+            this.sellmin.HeaderText = "Price";
+            this.sellmin.Name = "sellmin";
+            this.sellmin.ReadOnly = true;
+            // 
+            // buyprice
+            // 
+            dataGridViewCellStyle18.Format = "N0";
+            dataGridViewCellStyle18.NullValue = null;
+            this.buyprice.DefaultCellStyle = dataGridViewCellStyle18;
+            this.buyprice.Frozen = true;
+            this.buyprice.HeaderText = "Qty.";
+            this.buyprice.Name = "buyprice";
+            this.buyprice.ReadOnly = true;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1221, 468);
+            this.ClientSize = new System.Drawing.Size(1037, 551);
+            this.Controls.Add(this.btnReapplyFilters);
+            this.Controls.Add(this.chbStationNames);
             this.Controls.Add(this.chbMaxVolume);
             this.Controls.Add(this.txbMaxVolume);
             this.Controls.Add(this.txbExclude);
@@ -306,14 +332,16 @@
         private System.Windows.Forms.TextBox txbExclude;
         private System.Windows.Forms.TextBox txbMaxVolume;
         private System.Windows.Forms.CheckBox chbMaxVolume;
+        private System.Windows.Forms.CheckBox chbStationNames;
+        private System.Windows.Forms.Button btnReapplyFilters;
         private System.Windows.Forms.DataGridViewTextBoxColumn itemname;
         private System.Windows.Forms.DataGridViewTextBoxColumn profitpervolume;
         private System.Windows.Forms.DataGridViewTextBoxColumn unitprofit;
-        private System.Windows.Forms.DataGridViewTextBoxColumn sellmin;
-        private System.Windows.Forms.DataGridViewTextBoxColumn buyprice;
         private System.Windows.Forms.DataGridViewTextBoxColumn unitvolume;
         private System.Windows.Forms.DataGridViewTextBoxColumn sellstation;
-        private System.Windows.Forms.DataGridViewTextBoxColumn destinationstation;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ordertype;
+        private System.Windows.Forms.DataGridViewTextBoxColumn sellmin;
+        private System.Windows.Forms.DataGridViewTextBoxColumn buyprice;
     }
 }
 

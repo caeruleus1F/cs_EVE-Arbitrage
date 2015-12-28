@@ -13,9 +13,9 @@ namespace cs_EVE_Arbitrage
         float _volume = 0F;
         decimal _sellorderlowest = 0M;
         decimal _buyorderhighest = 0M;
-        string _sellorderstation = null;
-        string _buyorderstation = null;
         decimal _profitperm3 = 0M;
+        List<BuyOrder> _buyorders = new List<BuyOrder>();
+        List<SellOrder> _sellorders = new List<SellOrder>();
 
         public MarketableItem()
         {
@@ -59,23 +59,22 @@ namespace cs_EVE_Arbitrage
             set { _buyorderhighest = value; }
         }
 
-        public string SellOrderStation
-        {
-            get { return _sellorderstation; }
-            set { _sellorderstation = value; }
-        }
-
-        public string BuyOrderStation
-        {
-            get { return _buyorderstation; }
-            set { _buyorderstation = value; }
-        }
-
         public decimal ProfitPerM3
         {
             get { return _profitperm3; }
             set { _profitperm3 = value; }
         }
 
+        public List<BuyOrder> BuyOrders
+        {
+            get { return _buyorders; }
+            set { _buyorders = value; }
+        }
+
+        public List<SellOrder> SellOrders
+        {
+            get { return _sellorders; }
+            set { _sellorders = value; }
+        }
     }
 }

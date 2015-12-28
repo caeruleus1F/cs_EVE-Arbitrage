@@ -22,8 +22,22 @@ namespace cs_EVE_Arbitrage
         int _requests = 0;
         int _serverresponses = 0;
 
+        int _marketstatsellresponses = 0;
+        bool _marketstatsellcomplete = false;
+        int _marketstatbuyresponses = 0;
+        bool _marketstatbuycomplete = false;
+        int _quicklooksellresponses = 0;
+        bool _quicklooksellcomplete = false;
+        int _quicklookbuyresponses = 0;
+        bool _quicklookbuycomplete = false;
+
         public delegate void DisplayDelegate(List<MarketableItem> marketableitems);
         public delegate void StatusDelegate(string text);
+
+        bool _resolvestationnames = false;
+        bool _ratelimited = false;
+        int _waitmilli = 100;
+        int _maxurilength = 1500;
 
         public EVECentralInterfacer(Form1 f, string source, string destination, List<MarketableItem> marketableitems)
         {
@@ -35,12 +49,14 @@ namespace cs_EVE_Arbitrage
 
         public void Begin()
         {
+
+            //TestTypeIDs();
+
             // get marketstat sellmin from source
-            int maxurilength = 2000;
-            GetMarketstatSellMinData(maxurilength);
+            GetMarketstatSellMinData();
 
             // get marketstat buymax from destination
-            GetMarketstatBuyMaxData(maxurilength);
+            GetMarketstatBuyMaxData();
 
             // discard marketables with no arbitrage opportunities
             DiscardUnprofitableTrades();
@@ -48,25 +64,206 @@ namespace cs_EVE_Arbitrage
             // calculate profit per volume
             CalcProfitPerVolume();
 
-            // get quicklook sellmin from marketables
-            GetQuicklookBuyData(maxurilength);
+            if (_f.ResolveStationNames()) // doesn't work for now
+            {
+                // get quicklook buymax from marketables
+                GetQuicklookBuyData();
 
-            // get quicklook buymax from marketables
-            GetQuicklookSellData(maxurilength);
+                // get quicklook sellmin from marketables
+                GetQuicklookSellData();
+
+                TrimMarketOrders();
+            }
 
             // display the results
             OrganizeByDescendingPPV();
             DisplayResults();
-            Thread.CurrentThread.Abort();
-            Thread.CurrentThread.Join();
         }
 
-        private void GetQuicklookSellData(int maxurilength)
+        private void TrimMarketOrders()
         {
-            _serverresponses = 0;
-            _locationid = _sourceid;
-            List<string> URIs = AssembleQuicklookURIs(maxurilength);
+            // identify market orders that are profitable
+            for (int i = 0; i < _marketableitems.Count; ++i)
+            {
+                MarketableItem m = _marketableitems[i];
+
+                foreach (BuyOrder b in m.BuyOrders)
+                {
+                    foreach (SellOrder s in m.SellOrders)
+                    {
+                        if (b.Price * .98M > s.Price)
+                        {
+                            b.IsHigherThanSellOrder = true;
+                            s.IsLowerThanBuyOrder = true;
+                        }
+                    }
+                }
+            }
+
+            // trim sell orders that are too high
+            for (int i = 0; i < _marketableitems.Count; ++i)
+            {
+                MarketableItem m = _marketableitems[i];
+
+                for (int j = m.SellOrders.Count - 1; j >= 0; --j)
+                {
+                    if (m.SellOrders[j].IsLowerThanBuyOrder == false)
+                    {
+                        m.SellOrders.RemoveAt(j);
+                    }
+                }
+            }
+
+            // trim buy orders that are too low
+            for (int i = 0; i < _marketableitems.Count; ++i)
+            {
+                MarketableItem m = _marketableitems[i];
+
+                for (int j = m.BuyOrders.Count - 1; j >= 0; --j)
+                {
+                    if (m.BuyOrders[j].IsHigherThanSellOrder == false)
+                    {
+                        m.BuyOrders.RemoveAt(j);
+                    }
+                }
+            }
+
+            // if an item has no remaining buy or sell orders, remove
+            for (int i = _marketableitems.Count - 1; i >= 0; --i)
+            {
+                MarketableItem m = _marketableitems[i];
+
+                if (m.BuyOrders.Count == 0 || m.SellOrders.Count == 0)
+                {
+                    _marketableitems.Remove(m);
+                }
+            }
+
+            // bubblesort sell orders by descending
+            foreach (MarketableItem m in _marketableitems)
+            {
+                for (int i = 0; i < m.SellOrders.Count - 1; ++i)
+                {
+                    for (int j = 1; j < m.SellOrders.Count - i; ++j)
+                    {
+
+                        if (m.SellOrders[j - 1].Price < m.SellOrders[j].Price)
+                        {
+                            SellOrder temp = m.SellOrders[j - 1];
+                            m.SellOrders[j - 1] = m.SellOrders[j];
+                            m.SellOrders[j] = temp;
+                        }
+                    }
+                }
+            }
+
+            // bubblesort buy orders by descending
+            foreach (MarketableItem m in _marketableitems)
+            {
+                for (int i = 0; i < m.BuyOrders.Count - 1; ++i)
+                {
+                    for (int j = 1; j < m.BuyOrders.Count - i; ++j)
+                    {
+
+                        if (m.BuyOrders[j - 1].Price < m.BuyOrders[j].Price)
+                        {
+                            BuyOrder temp = m.BuyOrders[j - 1];
+                            m.BuyOrders[j - 1] = m.BuyOrders[j];
+                            m.BuyOrders[j] = temp;
+                        }
+                    }
+                }
+            }
+
+
+        }
+
+        private void TestTypeIDs()
+        {
+            WebClient w = new WebClient();
+            w.Proxy = null;
+            XmlDocument xmldoc = new XmlDocument();
+            _locationid = "30000142";
+            int count = 0;
+            List<string> URIs = null;
+
+            URIs = AssembleMarketstatURIs();
             _requests = URIs.Count;
+
+            foreach (string uri in URIs)
+            {
+                FindBadTypeIDs(uri);
+            }
+        }
+
+        private void FindBadTypeIDs(string uri)
+        {
+            WebClient web = new WebClient();
+            web.Proxy = null;
+            XmlDocument xmldoc = new XmlDocument();
+            string[] typeids = uri.Remove(0, uri.LastIndexOf('=') + 1).Split(',');
+            int length = typeids.Length;
+
+            try
+            {
+                xmldoc.LoadXml(web.DownloadString(uri));
+            }
+            catch (Exception ex)
+            {
+                if (length > 1)
+                {
+                    StringBuilder sb = CreateBaseMarketstatURL();
+
+                    for (int i = 0; i < length / 2; ++i)
+                    {
+                        sb.Append(typeids[i]);
+
+                        if (i < (length / 2) - 1)
+                        {
+                            sb.Append(',');
+                        }
+                    }
+
+                    FindBadTypeIDs(sb.ToString());
+                    sb.Clear();
+
+                    sb = CreateBaseMarketstatURL();
+
+                    for (int i = length / 2; i < length; ++i)
+                    {
+                        sb.Append(typeids[i]);
+
+                        if (i < length - 1)
+                        {
+                            sb.Append(',');
+                        }
+                    }
+
+                    FindBadTypeIDs(sb.ToString());
+                    sb.Clear();
+                }
+                else
+                {
+                    using (System.IO.StreamWriter wr = new System.IO.StreamWriter("badtypeids.txt", true))
+                    {
+                        wr.WriteLine(typeids[0]);
+                        wr.Close();
+                    }
+                }
+            }
+        }
+
+        private void GetQuicklookSellData()
+        {
+            List<string> URIs = null;
+
+            lock (new object())
+            {
+                _quicklooksellresponses = 0;
+                _locationid = _sourceid;
+                URIs = AssembleQuicklookURIs();
+                _requests = URIs.Count;
+            }
 
             try
             {
@@ -79,10 +276,13 @@ namespace cs_EVE_Arbitrage
                     w[i].Headers.Add("IGN", "Thirtyone Organism");
                     w[i].DownloadStringCompleted += w_QuicklookSellData;
                     w[i].DownloadStringAsync(new Uri(URIs[i]));
-                    Thread.Sleep(1000);
+                    if (_ratelimited)
+                    {
+                        Thread.Sleep(_waitmilli);
+                    }
                 }
 
-                while (_serverresponses < _requests - 1)
+                while (_quicklooksellresponses < _requests - 1)
                 {
                     Thread.Sleep(1);
                 }
@@ -100,109 +300,50 @@ namespace cs_EVE_Arbitrage
             try
             {
                 xmldoc.LoadXml(e.Result);
+                string typeid = xmldoc.SelectSingleNode("/evec_api/quicklook/item").InnerText;
+                bool match = false;
 
-                foreach (XmlNode n in xmldoc.SelectNodes("/evec_api/marketstat/type"))
+                for (int i = 0; i < _marketableitems.Count && !match; ++i)
                 {
-                    string typeid = n.Attributes[0].Value;
-                    decimal sellmin = Convert.ToDecimal(n.SelectSingleNode("sell/min").InnerText);
+                    if (_marketableitems[i].TypeID.Equals(typeid))
+                    {
+                        match = true;
+                        MarketableItem m = _marketableitems[i];
 
-                    if (sellmin == 0M)
-                    {
-                        lock (new object())
+                        foreach (XmlNode n in xmldoc.SelectNodes("/evec_api/quicklook/sell_orders/order"))
                         {
-                            _marketableitems.Remove(FindMarketableByTypeID(typeid));
-                        }
-                    }
-                    else
-                    {
-                        lock (new object())
-                        {
-                            _marketableitems[_marketableitems.IndexOf(FindMarketableByTypeID(typeid))].SellOrderLowest = sellmin;
+                            string stationname = n.SelectSingleNode("station_name").InnerText;
+                            decimal price = Convert.ToDecimal(n.SelectSingleNode("price").InnerText);
+                            int remainingvolume = Convert.ToInt32(n.SelectSingleNode("vol_remain").InnerText);
+                            int minvolume = Convert.ToInt32(n.SelectSingleNode("min_volume").InnerText);
+                            m.SellOrders.Add(new SellOrder(stationname, price, remainingvolume, minvolume));
                         }
                     }
                 }
 
                 lock (new object())
                 {
-                    ++_serverresponses;
+                    ++_quicklooksellresponses;
+                    UpdateStatus("Source Station Data Retrieved (" + _quicklooksellresponses + " of " + _requests + ")");
                 }
 
-                UpdateStatus("Source Station Data Retrieved (" + _serverresponses + " of " + _requests + ")");
             }
             catch (Exception ex)
             {
             }
         }
 
-        private List<string> AssembleQuicklookURIs(int maxurilength)
+        private void GetQuicklookBuyData()
         {
-            List<string> uris = new List<string>();
-            StringBuilder sb = new StringBuilder();
+            List<string> URIs = null;
 
-            sb = CreateBaseQuicklookURL();
-
-            int typeidlength = 0;
-
-            for (int i = 0; i < _marketableitems.Count; ++i)
+            lock (new object())
             {
-                typeidlength = _marketableitems[i].TypeID.Length;
-
-                if (typeidlength + sb.Length < maxurilength)
-                {
-                    sb.Append(_marketableitems[i].TypeID);
-
-                    if (i < _marketableitems.Count - 1)
-                    {
-                        sb.Append(',');
-                    }
-                }
-                else
-                {
-                    if (sb[sb.Length - 1].Equals(','))
-                    {
-                        sb.Remove(sb.Length - 1, 1);
-                    }
-
-                    uris.Add(sb.ToString());
-                    sb.Clear();
-                    sb = CreateBaseQuicklookURL();
-                }
+                _quicklookbuyresponses = 0;
+                _locationid = _destinationid;
+                URIs = AssembleQuicklookURIs();
+                _requests = URIs.Count;
             }
-
-            if (sb.Length > 68)
-            {
-                uris.Add(sb.ToString());
-            }
-
-            return uris;
-        }
-
-        private StringBuilder CreateBaseQuicklookURL()
-        {
-            StringBuilder sb = new StringBuilder();
-
-            sb.Append(_basequicklookurl);
-
-            if (_locationid[0].Equals('1'))
-            {
-                sb.Append("regionlimit=");
-            }
-            else if (_locationid[0].Equals('3'))
-            {
-                sb.Append("usesystem=");
-            }
-
-            sb.Append(_locationid).Append("&typeid=");
-
-            return sb;
-        }
-
-        private void GetQuicklookBuyData(int maxurilength)
-        {
-            _serverresponses = 0;
-            _locationid = _destinationid;
-            List<string> URIs = AssembleQuicklookURIs(maxurilength);
-            _requests = URIs.Count;
 
             try
             {
@@ -215,10 +356,13 @@ namespace cs_EVE_Arbitrage
                     w[i].Headers.Add("IGN", "Thirtyone Organism");
                     w[i].DownloadStringCompleted += w_QuicklookBuyData;
                     w[i].DownloadStringAsync(new Uri(URIs[i]));
-                    Thread.Sleep(1000);
+                    if (_ratelimited)
+                    {
+                        Thread.Sleep(_waitmilli);
+                    }
                 }
 
-                while (_serverresponses < _requests - 1)
+                while (_quicklookbuyresponses < _requests - 1)
                 {
                     Thread.Sleep(1);
                 }
@@ -236,46 +380,59 @@ namespace cs_EVE_Arbitrage
             try
             {
                 xmldoc.LoadXml(e.Result);
+                string typeid = xmldoc.SelectSingleNode("/evec_api/quicklook/item").InnerText;
+                bool match = false;
 
-                foreach (XmlNode n in xmldoc.SelectNodes("/evec_api/marketstat/type"))
+                for (int i = 0; i < _marketableitems.Count && !match; ++i)
                 {
-                    string typeid = n.Attributes[0].Value;
-                    decimal sellmin = Convert.ToDecimal(n.SelectSingleNode("sell/min").InnerText);
+                    if (_marketableitems[i].TypeID.Equals(typeid))
+                    {
+                        match = true;
+                        MarketableItem m = _marketableitems[i];
 
-                    if (sellmin == 0M)
-                    {
-                        lock (new object())
+                        foreach (XmlNode n in xmldoc.SelectNodes("/evec_api/quicklook/buy_orders/order"))
                         {
-                            _marketableitems.Remove(FindMarketableByTypeID(typeid));
-                        }
-                    }
-                    else
-                    {
-                        lock (new object())
-                        {
-                            _marketableitems[_marketableitems.IndexOf(FindMarketableByTypeID(typeid))].SellOrderLowest = sellmin;
+                            string stationname = n.SelectSingleNode("station_name").InnerText;
+                            decimal price = Convert.ToDecimal(n.SelectSingleNode("price").InnerText);
+                            int remainingvolume = Convert.ToInt32(n.SelectSingleNode("vol_remain").InnerText);
+                            int minvolume = Convert.ToInt32(n.SelectSingleNode("min_volume").InnerText);
+                            m.BuyOrders.Add(new BuyOrder(stationname, price, remainingvolume, minvolume));
                         }
                     }
                 }
 
                 lock (new object())
                 {
-                    ++_serverresponses;
+                    ++_quicklookbuyresponses;
+                    UpdateStatus("Destination Station Data Retrieved (" + _quicklookbuyresponses + " of " + _requests + ")");
                 }
 
-                UpdateStatus("Destination Station Data Retrieved (" + _serverresponses + " of " + _requests + ")");
             }
             catch (Exception ex)
             {
             }
         }
 
-        private void GetMarketstatSellMinData(int maxlength)
+        private void GetMarketstatSellMinData()
         {
-            _serverresponses = 0;
-            _locationid = _sourceid;
-            List<string> URIs = AssembleMarketstatURIs(maxlength);
-            _requests = URIs.Count;
+            List<string> URIs = null;
+
+            lock (new object())
+            {
+                _marketstatsellresponses = 0;
+                _marketstatsellcomplete = false;
+                _locationid = _sourceid;
+                URIs = AssembleMarketstatURIs();
+                _requests = URIs.Count;
+            }
+
+            using (System.IO.StreamWriter w = new System.IO.StreamWriter("uris.txt"))
+            {
+                foreach (string line in URIs)
+                {
+                    w.WriteLine(line);
+                }
+            }
 
             try
             {
@@ -288,10 +445,13 @@ namespace cs_EVE_Arbitrage
                     w[i].Headers.Add("IGN", "Thirtyone Organism");
                     w[i].DownloadStringCompleted += w_MarketstatSellMin;
                     w[i].DownloadStringAsync(new Uri(URIs[i]));
-                    Thread.Sleep(1000);
+                    if (_ratelimited)
+                    {
+                        Thread.Sleep(_waitmilli);
+                    }
                 }
 
-                while (_serverresponses < _requests - 1)
+                while (!_marketstatsellcomplete)
                 {
                     Thread.Sleep(1);
                 }
@@ -313,49 +473,6 @@ namespace cs_EVE_Arbitrage
             }
         }
 
-        private List<string> AssembleMarketstatURIs(int maxlength)
-        {
-            List<string> uris = new List<string>();
-            StringBuilder sb = new StringBuilder();
-
-            sb = CreateBaseMarketstatURL();
-
-            int typeidlength = 0;
-
-            for (int i = 0; i < _marketableitems.Count; ++i)
-            {
-                typeidlength = _marketableitems[i].TypeID.Length;
-
-                if (typeidlength + sb.Length < maxlength)
-                {
-                    sb.Append(_marketableitems[i].TypeID);
-
-                    if (i < _marketableitems.Count - 1)
-                    {
-                        sb.Append(',');
-                    }
-                }
-                else
-                {
-                    if (sb[sb.Length - 1].Equals(','))
-                    {
-                        sb.Remove(sb.Length - 1, 1);
-                    }
-
-                    uris.Add(sb.ToString());
-                    sb.Clear();
-                    sb = CreateBaseMarketstatURL();
-                }
-            }
-
-            if (sb.Length > 68)
-            {
-                uris.Add(sb.ToString());
-            }
-
-            return uris;
-        }
-
         private void w_MarketstatSellMin(object sender, DownloadStringCompletedEventArgs e)
         {
             XmlDocument xmldoc = new XmlDocument();
@@ -368,40 +485,41 @@ namespace cs_EVE_Arbitrage
                     string typeid = n.Attributes[0].Value;
                     decimal sellmin = Convert.ToDecimal(n.SelectSingleNode("sell/min").InnerText);
 
-                    if (sellmin == 0M)
+                    lock (new object())
                     {
-                        lock (new object())
-                        {
-                            _marketableitems.Remove(FindMarketableByTypeID(typeid));
-                        }
-                    }
-                    else
-                    {
-                        lock (new object())
-                        {
-                            _marketableitems[_marketableitems.IndexOf(FindMarketableByTypeID(typeid))].SellOrderLowest = sellmin;
-                        }
+                        _marketableitems[_marketableitems.IndexOf(FindMarketableByTypeID(typeid))].SellOrderLowest = sellmin;
                     }
                 }
 
                 lock (new object())
                 {
-                    ++_serverresponses;
+                    ++_marketstatsellresponses;
+                    UpdateStatus("Sellmin Data Retrieved (" + _marketstatsellresponses + " of " + _requests + ")");
+
+                    if (_marketstatsellresponses == _requests - 1)
+                    {
+                        _marketstatsellcomplete = true;
+                    }
                 }
 
-                UpdateStatus("Sellmin Data Retrieved (" + _serverresponses + " of " + _requests + ")");
             }
             catch (Exception ex)
             {
             }
         }
 
-        private void GetMarketstatBuyMaxData(int maxurilength)
+        private void GetMarketstatBuyMaxData()
         {
-            _serverresponses = 0;
-            _locationid = _destinationid;
-            List<string> URIs = AssembleMarketstatURIs(maxurilength);
-            _requests = URIs.Count;
+            List<string> URIs = null;
+
+            lock (new object())
+            {
+                _marketstatbuyresponses = 0;
+                _marketstatbuycomplete = false;
+                _locationid = _destinationid;
+                URIs = AssembleMarketstatURIs();
+                _requests = URIs.Count;
+            }
 
             try
             {
@@ -412,10 +530,13 @@ namespace cs_EVE_Arbitrage
                     w[i].Proxy = null;
                     w[i].DownloadStringCompleted += w_MarketstatBuyMax;
                     w[i].DownloadStringAsync(new Uri(URIs[i]));
-                    Thread.Sleep(1000);
+                    if (_ratelimited)
+                    {
+                        Thread.Sleep(_waitmilli);
+                    }
                 }
 
-                while (_serverresponses < _requests - 1)
+                while (!_marketstatbuycomplete)
                 {
                     Thread.Sleep(1);
                 }
@@ -449,28 +570,23 @@ namespace cs_EVE_Arbitrage
                     string typeid = n.Attributes[0].Value;
                     decimal buymax = Convert.ToDecimal(n.SelectSingleNode("buy/max").InnerText);
 
-                    if (buymax == 0M)
+                    lock (new object())
                     {
-                        lock (new object())
-                        {
-                            _marketableitems.Remove(FindMarketableByTypeID(typeid));
-                        }
-                    }
-                    else
-                    {
-                        lock (new object())
-                        {
-                            _marketableitems[_marketableitems.IndexOf(FindMarketableByTypeID(typeid))].BuyOrderHighest = buymax;
-                        }
+                        _marketableitems[_marketableitems.IndexOf(FindMarketableByTypeID(typeid))].BuyOrderHighest = buymax;
                     }
                 }
 
                 lock (new object())
                 {
-                    ++_serverresponses;
+                    ++_marketstatbuyresponses;
+                    UpdateStatus("Buymax Data Retrieved (" + _marketstatbuyresponses + " of " + _requests + ")");
+
+                    if (_marketstatbuyresponses == _requests - 1)
+                    {
+                        _marketstatbuycomplete = true;
+                    }
                 }
 
-                UpdateStatus("Buymax Data Retrieved (" + _serverresponses + " of " + _requests + ")");
             }
             catch (Exception ex)
             {
@@ -482,6 +598,92 @@ namespace cs_EVE_Arbitrage
          * SUPPORTING FUNCTIONS
          * 
          ***********************************************************************/
+
+        private List<string> AssembleQuicklookURIs()
+        {
+            List<string> uris = new List<string>();
+            StringBuilder sb = new StringBuilder();
+
+            foreach (MarketableItem m in _marketableitems)
+            {
+                sb = CreateBaseQuicklookURL();
+                sb.Append(m.TypeID);
+                uris.Add(sb.ToString());
+                sb.Clear();
+            }
+
+            return uris;
+        }
+
+        private List<string> AssembleMarketstatURIs()
+        {
+            List<string> uris = new List<string>();
+            StringBuilder sb = new StringBuilder();
+            int typeidlength = 0;
+
+            sb = CreateBaseMarketstatURL();
+
+            for (int i = 0; i < _marketableitems.Count; ++i)
+            {
+                typeidlength = _marketableitems[i].TypeID.Length;
+            
+                if (typeidlength + sb.Length + 1 < _maxurilength)
+                {
+                    sb.Append(_marketableitems[i].TypeID);
+            
+                    if (i < _marketableitems.Count - 1)
+                    {
+                        sb.Append(',');
+                    }
+                }
+                else
+                {
+                    if (sb[sb.Length - 1].Equals(','))
+                    {
+                        sb.Remove(sb.Length - 1, 1);
+                    }
+            
+                    uris.Add(sb.ToString());
+                    sb.Clear();
+
+                    sb = CreateBaseMarketstatURL();
+
+                    sb.Append(_marketableitems[i].TypeID);
+
+                    if (i < _marketableitems.Count - 1)
+                    {
+                        sb.Append(',');
+                    }
+                }
+            }
+            
+            if (sb.Length > 68)
+            {
+                uris.Add(sb.ToString());
+            }
+
+            return uris;
+        }
+
+        private StringBuilder CreateBaseQuicklookURL()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append(_basequicklookurl);
+
+            if (_locationid[0].Equals('1'))
+            {
+                sb.Append("regionlimit=");
+            }
+            else if (_locationid[0].Equals('3'))
+            {
+                sb.Append("usesystem=");
+            }
+
+            sb.Append(_locationid).Append("&typeid=");
+
+            return sb;
+        }
 
         private void DiscardUnprofitableTrades()
         {
@@ -520,7 +722,7 @@ namespace cs_EVE_Arbitrage
 
         private void OrganizeByDescendingPPV()
         {
-            // bubble sortint temp;
+            // bubble sort
             for(int i = 0; i < _marketableitems.Count - 1; ++i)
             {
                 for(int j = 1; j < _marketableitems.Count - i; ++j)
@@ -540,6 +742,11 @@ namespace cs_EVE_Arbitrage
             {
                 _f.rtbDisplay.Invoke(new StatusDelegate(_f.UpdateStatus), text);
             }
+        }
+
+        private void ResolveStationNames()
+        {
+            _resolvestationnames = _f.ResolveStationNames();
         }
 
         private void DisplayResults()

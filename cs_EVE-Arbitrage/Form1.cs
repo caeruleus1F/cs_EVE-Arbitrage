@@ -18,6 +18,9 @@ namespace cs_EVE_Arbitrage
         List<string> _solarsystems = null;
         List<string> _regions = null;
 
+        Thread _t = null;
+        List<MarketableItem> _filteredlist = null;
+
         public Form1()
         {
             InitializeComponent();
@@ -66,6 +69,11 @@ namespace cs_EVE_Arbitrage
 
         private void btnFind_Click(object sender, EventArgs e)
         {
+            if (_t != null && _t.IsAlive)
+            {
+                _t.Abort();
+            }
+
             string source = txbSource.Text;
             string destination = txbDestination.Text;
 
@@ -81,11 +89,18 @@ namespace cs_EVE_Arbitrage
             if (destinationid == null) destinationid = FindRegionID(destination);
             if (destinationid == null) MessageBox.Show("Destination mispelled?");
 
+            _filteredlist = new List<MarketableItem>();
+
+            foreach (MarketableItem m in _all_marketables)
+            {
+                _filteredlist.Add(m);
+            }
+
             if (sourceid != null && destinationid != null)
             {
-                Thread t = new Thread(new EVECentralInterfacer(this, sourceid, destinationid, _all_marketables).Begin);
-                t.IsBackground = true;
-                t.Start();
+                _t = new Thread(new EVECentralInterfacer(this, sourceid, destinationid, _filteredlist).Begin);
+                _t.IsBackground = true;
+                _t.Start();
             }
 
         }
@@ -139,32 +154,63 @@ namespace cs_EVE_Arbitrage
 
         public void Display(List<MarketableItem> marketables)
         {
+            dgvDisplay.Rows.Clear();
+
             decimal minprofitpervolume = 0M;
             float maxvolume = 2000000F;
+            bool validinput = true;
 
             if (chbExclude.Checked == true)
             {
-                minprofitpervolume = Convert.ToDecimal(txbExclude.Text);
+                try
+                {
+                    minprofitpervolume = Convert.ToDecimal(txbExclude.Text);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Minimum profit per volume must be a number.");
+                    validinput = false;
+                }
             }
 
             if (chbMaxVolume.Checked == true)
             {
-                maxvolume = Convert.ToSingle(txbMaxVolume.Text);
-            }
-
-            foreach (MarketableItem m in marketables)
-            {
-                if (m.ProfitPerM3 >= minprofitpervolume &&
-                    m.Volume <= maxvolume)
+                try
                 {
-                    decimal unitprofit = (m.BuyOrderHighest * .98M - m.SellOrderLowest);
-                    dgvDisplay.Rows.Add(m.TypeName, m.ProfitPerM3, unitprofit,
-                        m.SellOrderLowest, m.BuyOrderHighest, m.Volume,
-                        m.SellOrderStation, m.BuyOrderStation);
+                    maxvolume = Convert.ToSingle(txbMaxVolume.Text);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Max volume must be a number.");
+                    validinput = false;
                 }
             }
 
-            rtbDisplay.Text = "Complete!";
+            if (marketables != null && validinput == true)
+            {
+                foreach (MarketableItem m in marketables)
+                {
+                    if (m.Volume <= maxvolume && m.ProfitPerM3 >= minprofitpervolume) 
+                    {
+                        // edit this to reflect the fact that there can be multi buy/sell orders to fill.
+                        decimal unitprofit = (m.BuyOrderHighest * .98M - m.SellOrderLowest);
+                        foreach (SellOrder s in m.SellOrders)
+                        {
+                            dgvDisplay.Rows.Add(m.TypeName, m.ProfitPerM3, unitprofit,
+                                m.Volume, s.StationName, "S", s.Price, s.RemainingVolume);
+                        }
+
+                        foreach (BuyOrder b in m.BuyOrders)
+                        {
+                            dgvDisplay.Rows.Add(m.TypeName, m.ProfitPerM3, unitprofit,
+                                m.Volume, b.StationName, "B", b.Price, b.RemainingVolume);
+                        }
+                    }
+
+                }
+
+                rtbDisplay.Text = "Complete!";
+            }
         }
 
         public void UpdateStatus(string text)
@@ -194,6 +240,16 @@ namespace cs_EVE_Arbitrage
             {
                 txbMaxVolume.Enabled = false;
             }
+        }
+
+        public bool ResolveStationNames()
+        {
+            return chbStationNames.Checked;
+        }
+
+        private void btnReapplyFilters_Click(object sender, EventArgs e)
+        {
+            Display(_filteredlist);
         }
     }
 }
