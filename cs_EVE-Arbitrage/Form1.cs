@@ -98,7 +98,7 @@ namespace cs_EVE_Arbitrage
 
             if (sourceid != null && destinationid != null)
             {
-                _t = new Thread(new EVECentralInterfacer(this, sourceid, destinationid, _filteredlist).Begin);
+                _t = new Thread(new Backend(this, sourceid, destinationid, _filteredlist).Begin);
                 _t.IsBackground = true;
                 _t.Start();
             }
